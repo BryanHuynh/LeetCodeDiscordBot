@@ -5,6 +5,7 @@ export class LeetCodeSubmissionBuilder {
   user: string = "";
   real_name: string = "";
   problem_name: string = "";
+  problem_description: string = "";
   problem_url: string = "";
   difficulty: DifficultyLevel = "easy";
   language: string = "";
@@ -24,8 +25,15 @@ export class LeetCodeSubmissionBuilder {
     return this;
   }
 
-  public withProblemName(propblem_name: string): LeetCodeSubmissionBuilder {
-    this.problem_name = propblem_name;
+  public withProblemName(problem_name: string): LeetCodeSubmissionBuilder {
+    this.problem_name = problem_name;
+    return this;
+  }
+
+  public withProblemDescription(
+    problem_description: string
+  ): LeetCodeSubmissionBuilder {
+    this.problem_description = problem_description;
     return this;
   }
 
@@ -55,7 +63,7 @@ export class LeetCodeSubmissionBuilder {
     this.memory_usage = memory_usage;
     return this;
   }
-   
+
   public withAcceptedSubmissions(
     accepted_submissions: number
   ): LeetCodeSubmissionBuilder {

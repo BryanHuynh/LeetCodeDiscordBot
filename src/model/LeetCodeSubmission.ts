@@ -5,6 +5,7 @@ class LeetCodeSubmission {
   user: string;
   real_name: string;
   problem_name: string;
+  problem_description: string;
   problem_url: string;
   difficulty: DifficultyLevel;
   language: string;
@@ -18,6 +19,7 @@ class LeetCodeSubmission {
     this.user = builder.user;
     this.real_name = builder.real_name;
     this.problem_name = builder.problem_name;
+    this.problem_description = builder.problem_description;
     this.problem_url = builder.problem_url;
     this.difficulty = builder.difficulty;
     this.language = builder.language;

@@ -11,6 +11,7 @@ class LeetCodeSubmission {
   accepted_submissions: string;
   total_submissions: string;
   acceptance_rate: string;
+  submission_url: string;
 
   constructor(builder: LeetCodeSubmissionBuilder) {
     this.user = builder.user;
@@ -22,6 +23,7 @@ class LeetCodeSubmission {
     this.accepted_submissions = builder.accepted_submissions;
     this.total_submissions = builder.total_submissions;
     this.acceptance_rate = builder.acceptance_rate;
+    this.submission_url = builder.submission_url;
   }
 }
 export default LeetCodeSubmission;

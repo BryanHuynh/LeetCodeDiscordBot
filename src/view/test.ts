@@ -21,7 +21,8 @@ async function ping(
         value: `${lcs.user} (<@${lcs.discord_name}>)`,
         inline: true,
       },
-      { name: "difficulty", value: `${lcs.difficulty}`, inline: true }
+      { name: "Difficulty", value: `${lcs.difficulty}`, inline: true },
+      { name: 'Submission link', value: `${lcs.submission_url}`}
     )
     .setDescription(lcs.problem_description)
     .setFooter({

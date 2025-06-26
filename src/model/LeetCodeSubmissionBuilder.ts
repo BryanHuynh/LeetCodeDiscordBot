@@ -20,6 +20,7 @@ export class LeetCodeSubmissionBuilder {
   total_submissions: string = "";
   acceptance_rate: string = "";
   category: string = "";
+  submission_url: string = "";
 
   public withUser(user: string): LeetCodeSubmissionBuilder {
     this.user = user;
@@ -79,6 +80,11 @@ export class LeetCodeSubmissionBuilder {
     return this;
   }
 
+  public withSubmissionUrl(url: string): LeetCodeSubmissionBuilder {
+    this.submission_url = url;
+    return this;
+  }
+
   public build(): LeetCodeSubmission {
     return new LeetCodeSubmission(this);
   }
@@ -109,7 +115,8 @@ export class LeetCodeSubmissionBuilder {
       .withDifficulty(questionStat.difficulty)
       .withAcceptedSubmissions(questionStat.stats.totalSubmissions)
       .withTotalSubmissions(questionStat.stats.totalSubmissions)
-      .withAcceptedRate(questionStat.stats.acceptanceRate);
+      .withAcceptedRate(questionStat.stats.acceptanceRate)
+      .withSubmissionUrl(userSubmissions[0].submissionUrl);
     return builder.build();
   }
 }

@@ -12,8 +12,10 @@ type UserSubmission = {
   title: string;
   titleSlug: string;
   timestamp: string;
+  submissionUrl: string;
 };
 
+const submissionUrlTemplate = "https://leetcode.com/submissions/detail/";
 function fromUserSubmissionsResponse(
   response: UserSubmissionsResponse
 ): UserSubmission[] {
@@ -23,7 +25,10 @@ function fromUserSubmissionsResponse(
     id: submission.id,
     title: submission.title,
     titleSlug: submission.titleSlug,
-    timestamp: new Date(Number.parseInt(submission.timestamp) * 1000).toString(),
+    timestamp: new Date(
+      Number.parseInt(submission.timestamp) * 1000
+    ).toString(),
+    submissionUrl: `${submissionUrlTemplate}${submission.id}/`,
   }));
 }
 

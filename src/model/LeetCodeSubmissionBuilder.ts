@@ -7,7 +7,7 @@ export class LeetCodeSubmissionBuilder {
   problem_name: string = "";
   problem_description: string = "";
   problem_url: string = "";
-  difficulty: DifficultyLevel = "easy";
+  difficulty: DifficultyLevel = "Easy";
   language: string = "";
   runtime: number = 0;
   memory_usage: number = 0;

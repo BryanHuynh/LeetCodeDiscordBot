@@ -11,12 +11,13 @@ function ping(
     .withRealName("Bryan Huynh")
     .withProblemName("24. Swap Nodes in Pairs")
     .withProblemDescription(
-      `Given a linked list, swap every two adjacent nodes and return its head. You must solve the problem without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)`
+      `Given the roots of two binary trees \`p\` and \`q\`, write a function to check if they are the same or not.\n\n` +
+        `Two binary trees are considered the same if they are structurally identical, and the nodes have the same value.\n\n`
     )
     .withProblemUrl(
       "https://leetcode.com/problems/swap-nodes-in-pairs/description/"
     )
-    .withDifficulty("easy")
+    .withDifficulty("Easy")
     .withLanguage("TypeScript")
     .withRuntime(1000)
     .withSubmittedCode("Console.log(Hello world)")
@@ -32,12 +33,8 @@ function ping(
     .setURL(lcs.problem_url)
     .setDescription(lcs.problem_description)
     .addFields(
-      { name: "User", value: `${lcs.real_name} (<@${lcs.user}>)` },
-      { name: "difficulty", value: `${lcs.difficulty}`, inline: true },
-      { name: "language", value: lcs.language, inline: true },
-      { name: "", value: `||\`\`\`ts\n${lcs.submitted_code}\n\`\`\`||` },
-      { name: "runtime", value: `${lcs.runtime} ms`, inline: true },
-      { name: "memory usage", value: `${lcs.memory_usage} MB`, inline: true }
+      { name: "User", value: `${lcs.real_name} (<@${lcs.user}>)`, inline: true},
+      { name: "difficulty", value: `${lcs.difficulty}`, inline: true }
     )
     .setFooter({
       text: `Accepted: ${lcs.accepted_submissions}/${

@@ -3,31 +3,25 @@ import LeetCodeSubmissionBuilder from "./LeetCodeSubmissionBuilder";
 
 class LeetCodeSubmission {
   user: string;
-  real_name: string;
+  discord_name: string;
   problem_name: string;
   problem_description: string;
   problem_url: string;
   difficulty: DifficultyLevel;
-  language: string;
-  runtime: number;
-  memory_usage: number;
-  accepted_submissions: number;
-  total_submissions: number;
-  submitted_code: string;
+  accepted_submissions: string;
+  total_submissions: string;
+  acceptance_rate: string;
 
   constructor(builder: LeetCodeSubmissionBuilder) {
     this.user = builder.user;
-    this.real_name = builder.real_name;
+    this.discord_name = builder.discord_name;
     this.problem_name = builder.problem_name;
     this.problem_description = builder.problem_description;
     this.problem_url = builder.problem_url;
     this.difficulty = builder.difficulty;
-    this.language = builder.language;
-    this.runtime = builder.runtime;
-    this.memory_usage = builder.memory_usage;
     this.accepted_submissions = builder.accepted_submissions;
     this.total_submissions = builder.total_submissions;
-    this.submitted_code = builder.submitted_code;
+    this.acceptance_rate = builder.acceptance_rate;
   }
 }
 export default LeetCodeSubmission;

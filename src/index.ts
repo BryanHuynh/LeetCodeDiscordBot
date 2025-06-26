@@ -9,7 +9,11 @@ import {
 } from "discord.js";
 import dotenv from "dotenv";
 import { ping } from "./view/test";
-import { getQuestionContentBySlug, getQuestionStatsByTitleSlug } from "./service/LeetCodeService";
+import {
+  getQuestionContentBySlug,
+  getQuestionStatsByTitleSlug,
+  getUserRecentSubmissionsByUsername,
+} from "./service/LeetCodeService";
 import logger from "./utils/Logger";
 
 dotenv.config();
@@ -28,11 +32,10 @@ client.once("ready", () => {
 
 client.on("messageCreate", (message) => {
   if (message.content === "!ping") {
-    const embed = ping(message, "pong");
-    message.reply({ embeds: [embed] });
+    ping(message, "pong").then((embed) => {
+      message.reply({ embeds: [embed] });
+    });
   }
 });
 
 client.login(process.env.DISCORD_TOKEN);
-
-getQuestionStatsByTitleSlug('two-sum').then(console.log)

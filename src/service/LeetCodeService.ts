@@ -10,6 +10,11 @@ import {
   QuestionStats,
   QuestionStatsResponse,
 } from "./types/QuestionStats";
+import {
+  fromUserSubmissionsResponse,
+  UserSubmission,
+  UserSubmissionsResponse,
+} from "./types/UserSubmissions";
 
 const leetCodeEndpoint: string = "https://leetcode.com/graphql/";
 
@@ -62,4 +67,35 @@ async function getQuestionStatsByTitleSlug(
   return fromQuestionStatsResponse(response);
 }
 
-export { getQuestionContentBySlug, getQuestionStatsByTitleSlug };
+async function getUserRecentSubmissionsByUsername(
+  username: string,
+  limit: number = 10
+): Promise<UserSubmission[]> {
+  logger.info(`getting user recent submissions for username: ${username}`);
+  const query: string = gql`
+    query recentAcSubmissions($username: String!, $limit: Int!) {
+      recentAcSubmissionList(username: $username, limit: $limit) {
+        id
+        title
+        titleSlug
+        timestamp
+      }
+    }
+  `;
+  const variables = {
+    username: username,
+    limit: limit,
+  };
+  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+  const response = await graphQLClient.request<UserSubmissionsResponse>(
+    query,
+    variables
+  );
+  return fromUserSubmissionsResponse(response);
+}
+
+export {
+  getQuestionContentBySlug,
+  getQuestionStatsByTitleSlug,
+  getUserRecentSubmissionsByUsername,
+};

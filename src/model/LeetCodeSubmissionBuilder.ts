@@ -1,27 +1,33 @@
+import {
+  getQuestionContentBySlug,
+  getQuestionStatsByTitleSlug,
+  getUserRecentSubmissionsByUsername,
+} from "../service/LeetCodeService";
+import { QuestionContent } from "../service/types/QuestionContent";
+import { UserSubmission } from "../service/types/UserSubmissions";
+import logger from "../utils/Logger";
 import { DifficultyLevel } from "./DifficultyLevel";
 import LeetCodeSubmission from "./LeetCodeSubmission";
 
 export class LeetCodeSubmissionBuilder {
   user: string = "";
-  real_name: string = "";
+  discord_name: string = "";
   problem_name: string = "";
   problem_description: string = "";
   problem_url: string = "";
   difficulty: DifficultyLevel = "Easy";
-  language: string = "";
-  runtime: number = 0;
-  memory_usage: number = 0;
-  accepted_submissions: number = 0;
-  total_submissions: number = 0;
-  submitted_code: string = "";
+  accepted_submissions: string = "";
+  total_submissions: string = "";
+  acceptance_rate: string = "";
+  category: string = "";
 
   public withUser(user: string): LeetCodeSubmissionBuilder {
     this.user = user;
     return this;
   }
 
-  public withRealName(real_name: string): LeetCodeSubmissionBuilder {
-    this.real_name = real_name;
+  public withDiscordName(discord_name: string): LeetCodeSubmissionBuilder {
+    this.discord_name = discord_name;
     return this;
   }
 
@@ -49,42 +55,62 @@ export class LeetCodeSubmissionBuilder {
     return this;
   }
 
-  public withLanguage(language: string): LeetCodeSubmissionBuilder {
-    this.language = language;
-    return this;
-  }
-
-  public withRuntime(runtime: number): LeetCodeSubmissionBuilder {
-    this.runtime = runtime;
-    return this;
-  }
-
-  public withMemoryUsage(memory_usage: number): LeetCodeSubmissionBuilder {
-    this.memory_usage = memory_usage;
-    return this;
-  }
-
   public withAcceptedSubmissions(
-    accepted_submissions: number
+    accepted_submissions: string
   ): LeetCodeSubmissionBuilder {
     this.accepted_submissions = accepted_submissions;
     return this;
   }
 
   public withTotalSubmissions(
-    total_submissions: number
+    total_submissions: string
   ): LeetCodeSubmissionBuilder {
     this.total_submissions = total_submissions;
     return this;
   }
 
-  public withSubmittedCode(submitted_code: string): LeetCodeSubmissionBuilder {
-    this.submitted_code = submitted_code;
+  public withAcceptedRate(accepted_rate: string): LeetCodeSubmissionBuilder {
+    this.acceptance_rate = accepted_rate;
+    return this;
+  }
+
+  public withCategory(category: string): LeetCodeSubmissionBuilder {
+    this.category = category;
     return this;
   }
 
   public build(): LeetCodeSubmission {
     return new LeetCodeSubmission(this);
+  }
+
+  public async buildLatestSubmissionFromServices(
+    username: string,
+    discord_name: string
+  ): Promise<LeetCodeSubmission> {
+    const userSubmissions: UserSubmission[] =
+      await getUserRecentSubmissionsByUsername(username);
+    if (userSubmissions.length == 0) {
+      logger.error(`unable to find submissions for ${username}`);
+    }
+    const [questionContent, questionStat] = await Promise.all([
+      getQuestionContentBySlug(userSubmissions[0].titleSlug),
+      getQuestionStatsByTitleSlug(userSubmissions[0].titleSlug),
+    ]);
+
+    const builder: LeetCodeSubmissionBuilder = new LeetCodeSubmissionBuilder()
+      .withUser(username)
+      .withDiscordName(discord_name)
+      .withProblemName(userSubmissions[0].title)
+      .withProblemDescription(questionContent.content)
+      .withCategory(questionStat.category)
+      .withProblemUrl(
+        `https://leetcode.com/problems/${questionContent.titleSlug}/description/`
+      )
+      .withDifficulty(questionStat.difficulty)
+      .withAcceptedSubmissions(questionStat.stats.totalSubmissions)
+      .withTotalSubmissions(questionStat.stats.totalSubmissions)
+      .withAcceptedRate(questionStat.stats.acceptanceRate);
+    return builder.build();
   }
 }
 

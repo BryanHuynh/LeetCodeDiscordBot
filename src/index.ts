@@ -1,20 +1,9 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  Client,
-  EmbedBuilder,
-  Events,
-  GatewayIntentBits,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
-import { ping } from "./view/test";
-import {
-  getQuestionContentBySlug,
-  getQuestionStatsByTitleSlug,
-  getUserRecentSubmissionsByUsername,
-} from "./service/LeetCodeService";
+
 import logger from "./utils/Logger";
+import { PingController } from "./controller/pingController";
+import { LinkingLeetCodeController } from "./controller/linkingLeetCodeController";
 
 dotenv.config();
 
@@ -26,16 +15,15 @@ const client = new Client({
   ],
 });
 
-client.once("ready", () => {
-  logger.info(`✅ Logged in as ${client.user?.tag}`);
-});
+let pingController: PingController;
+let linkingLeetCodeController: LinkingLeetCodeController;
 
-client.on("messageCreate", (message) => {
-  if (message.content === "!ping") {
-    ping(message, "pong").then((embed) => {
-      message.reply({ embeds: [embed] });
-    });
-  }
+client.once(Events.ClientReady, () => {
+  logger.info(`✅ Logged in as ${client.user?.tag}`);
+  pingController = new PingController(client);
+  pingController.init();
+  linkingLeetCodeController = new LinkingLeetCodeController(client);
+  linkingLeetCodeController.init();
 });
 
 client.login(process.env.DISCORD_TOKEN);

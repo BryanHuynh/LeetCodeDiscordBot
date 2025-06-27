@@ -94,8 +94,33 @@ async function getUserRecentSubmissionsByUsername(
   return fromUserSubmissionsResponse(response);
 }
 
+async function validateLeetCodeAccount(
+  leetcodeAccount: string
+): Promise<boolean> {
+  logger.info(`validating leetcode account: ${leetcodeAccount}`);
+  const query: string = gql`
+    query userPublicProfile($username: String!) {
+      matchedUser(username: $username) {
+        username
+      }
+    }
+  `;
+  const variables = {
+    username: leetcodeAccount,
+  };
+  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+  try {
+    const response: any = await graphQLClient.request(query, variables);
+    if(response.matchedUser) return true
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
 export {
   getQuestionContentBySlug,
   getQuestionStatsByTitleSlug,
   getUserRecentSubmissionsByUsername,
+  validateLeetCodeAccount,
 };

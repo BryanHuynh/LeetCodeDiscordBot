@@ -20,7 +20,6 @@ function fromQuestionContentResponse(
 }
 
 function htmlContentToDiscord(content: string): string {
-  console.log(content);
   return content
     .replace(/<p>(.*?)<\/p>/gs, (_, p1) => `${p1}\n\n`) // Paragraphs
     .replace(/<code>(.*?)<\/code>/gs, (_, code) => `\`${code}\``) // Inline code

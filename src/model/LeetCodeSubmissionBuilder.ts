@@ -99,14 +99,14 @@ export class LeetCodeSubmissionBuilder {
       logger.error(`unable to find submissions for ${username}`);
     }
     const [questionContent, questionStat] = await Promise.all([
-      getQuestionContentBySlug(userSubmissions[0].titleSlug),
-      getQuestionStatsByTitleSlug(userSubmissions[0].titleSlug),
+      getQuestionContentBySlug(userSubmissions[1].titleSlug),
+      getQuestionStatsByTitleSlug(userSubmissions[1].titleSlug),
     ]);
 
     const builder: LeetCodeSubmissionBuilder = new LeetCodeSubmissionBuilder()
       .withUser(username)
       .withDiscordName(discord_name)
-      .withProblemName(userSubmissions[0].title)
+      .withProblemName(userSubmissions[1].title)
       .withProblemDescription(questionContent.content)
       .withCategory(questionStat.category)
       .withProblemUrl(
@@ -116,7 +116,7 @@ export class LeetCodeSubmissionBuilder {
       .withAcceptedSubmissions(questionStat.stats.totalSubmissions)
       .withTotalSubmissions(questionStat.stats.totalSubmissions)
       .withAcceptedRate(questionStat.stats.acceptanceRate)
-      .withSubmissionUrl(userSubmissions[0].submissionUrl);
+      .withSubmissionUrl(userSubmissions[1].submissionUrl);
     return builder.build();
   }
 }

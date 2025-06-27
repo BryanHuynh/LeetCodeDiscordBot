@@ -42,6 +42,8 @@ function htmlContentToDiscord(content: string): string {
     .replace(/&lt;/g, "<")
     .replace(/&nbsp;/g, " ")
     .replace(/^\s*$(\r?\n)?/gm, "")
+    .replace(/.*Example.*?[\s\S]*$/i, "")
+    .replace(/&#39;/g, "'")
     .trim();
 }
 

@@ -1,11 +1,12 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseApp, initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import dotenv from "dotenv";
 import { ISubscriptionService } from "./i-subscription-service";
 import logger from "../utils/logger";
 
-class FirestoreService implements ISubscriptionService {
+export class FirestoreService implements ISubscriptionService {
     private firebaseConfig;
+    private firebaseApp?: FirebaseApp;
 
     constructor() {
         dotenv.config();
@@ -20,19 +21,37 @@ class FirestoreService implements ISubscriptionService {
         };
     }
 
-    subscribe(id: string, discord_id: string): Promise<boolean> {
-        logger.info(`subscribing user: ${id} with discord id: ${discord_id}`)
+    subscribe(
+        id: string,
+        discord_id: string,
+        guild_id: string
+    ): Promise<boolean> {
+        if (this.firebaseApp == undefined) {
+            logger.error("firebase app not initialized");
+            return Promise.resolve(false);
+        }
+        logger.info(
+            `subscribing user: ${id} with discord id: ${discord_id} in guild: ${guild_id}`
+        );
+
         return Promise.resolve(false);
     }
-    unsubscribe(id: string, discord_id: string): Promise<boolean> {
-        logger.info(`unsubscribing user: ${id} with discord id: ${discord_id}`)
+    unsubscribe(
+        id: string,
+        discord_id: string,
+        guild_id: string
+    ): Promise<boolean> {
+        if (this.firebaseApp == undefined) {
+            logger.error("firebase app not initialized");
+            return Promise.resolve(false);
+        }
+        logger.info(
+            `unsubscribing user: ${id} with discord id: ${discord_id} in guild: ${guild_id}`
+        );
         return Promise.resolve(false);
     }
 
     init() {
-        const app = initializeApp(this.firebaseConfig);
-        const analytics = getAnalytics(app);
+        this.firebaseApp = initializeApp(this.firebaseConfig);
     }
-
-
 }

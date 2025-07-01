@@ -8,16 +8,20 @@ import {
     TextInputStyle,
 } from "discord.js";
 import { validateLeetCodeAccount } from "../services/leetcode-service";
+import logger from "../utils/logger";
+import { ISubscriptionService } from "../services/i-subscription-service";
 
 export class LinkingLeetCodeController {
     private client: Client;
     private linkingLeetCodeCommand: SlashCommandBuilder;
+    private subscriptionService: ISubscriptionService;
 
-    constructor(client: Client) {
+    constructor(client: Client, subscriptionService: ISubscriptionService) {
         this.client = client;
         this.linkingLeetCodeCommand = new SlashCommandBuilder()
             .setName("linkleetcode")
             .setDescription("Link your Discord with your LeetCode account");
+        this.subscriptionService = subscriptionService;
     }
 
     init() {
@@ -62,6 +66,14 @@ export class LinkingLeetCodeController {
                         `unable to find leetcode account: ${response} (it could be private)`
                     );
                 } else {
+                    logger.info(
+                        `leetcode account: ${response} linked to ${interaction.user.username}`
+                    );
+                    this.subscriptionService.subscribe(
+                        response,
+                        interaction.user.username,
+                        interaction.guildId!
+                    );
                     await interaction.reply(
                         `Your leetcode account is: ${response} linked`
                     );

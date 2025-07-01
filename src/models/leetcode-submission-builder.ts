@@ -2,12 +2,12 @@ import {
   getQuestionContentBySlug,
   getQuestionStatsByTitleSlug,
   getUserRecentSubmissionsByUsername,
-} from "../service/LeetCodeService";
-import { QuestionContent } from "../service/types/QuestionContent";
-import { UserSubmission } from "../service/types/UserSubmissions";
-import logger from "../utils/Logger";
-import { DifficultyLevel } from "./DifficultyLevel";
-import LeetCodeSubmission from "./LeetCodeSubmission";
+} from "../services/leetcode-service";
+import { QuestionContent } from "../services/types/question-content";
+import { UserSubmission } from "../services/types/user-submission";
+import logger from "../utils/logger";
+import { DifficultyLevel } from "./difficulty-level";
+import LeetCodeSubmission from "./leetcode-submission";
 
 export class LeetCodeSubmissionBuilder {
   user: string = "";

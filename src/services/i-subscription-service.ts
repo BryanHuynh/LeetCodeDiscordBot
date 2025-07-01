@@ -1,0 +1,5 @@
+export interface ISubscriptionService {
+    subscribe(id: string, discord_id: string): Promise<boolean>;
+    unsubscribe(id: string, discord_id: string): Promise<boolean>;
+    init(): void;
+}

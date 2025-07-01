@@ -1,6 +1,6 @@
 import { CacheType, ChatInputCommandInteraction, EmbedBuilder, Message, OmitPartialGroupDMChannel } from "discord.js";
-import { LeetCodeSubmissionBuilder } from "../model/LeetCodeSubmissionBuilder";
-import LeetCodeSubmission from "../model/LeetCodeSubmission";
+import { LeetCodeSubmissionBuilder } from "../models/leetcode-submission-builder";
+import LeetCodeSubmission from "../models/leetcode-submission";
 
 async function ping(interaction: ChatInputCommandInteraction<CacheType>) {
   const lcs: LeetCodeSubmission =

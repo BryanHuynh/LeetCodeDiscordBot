@@ -1,9 +1,9 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 
-import logger from "./utils/Logger";
-import { PingController } from "./controller/pingController";
-import { LinkingLeetCodeController } from "./controller/linkingLeetCodeController";
+import logger from "./utils/logger";
+import { PingController } from "./controllers/ping-controller";
+import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
 
 dotenv.config();
 

@@ -3,18 +3,18 @@ import {
   fromQuestionContentResponse,
   QuestionContent,
   QuestionContentResponse,
-} from "./types/QuestionContent";
-import logger from "../utils/Logger";
+} from "./types/question-content";
+import logger from "../utils/logger";
 import {
   fromQuestionStatsResponse,
   QuestionStats,
   QuestionStatsResponse,
-} from "./types/QuestionStats";
+} from "./types/question-stats";
 import {
   fromUserSubmissionsResponse,
   UserSubmission,
   UserSubmissionsResponse,
-} from "./types/UserSubmissions";
+} from "./types/user-submission";
 
 const leetCodeEndpoint: string = "https://leetcode.com/graphql/";
 

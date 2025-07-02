@@ -94,6 +94,7 @@ async function getUserRecentSubmissionsByUsername(
   return fromUserSubmissionsResponse(response);
 }
 
+
 async function validateLeetCodeAccount(
   leetcodeAccount: string
 ): Promise<boolean> {

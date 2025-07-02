@@ -1,17 +1,13 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import {
-    addDoc,
-    collection,
     doc,
     Firestore,
     getFirestore,
     setDoc,
 } from "firebase/firestore";
-import { Analytics, getAnalytics } from "firebase/analytics";
 import dotenv from "dotenv";
 import { ISubscriptionService } from "./i-subscription-service";
 import logger from "../utils/logger";
-import { create } from "domain";
 
 export class FirestoreService implements ISubscriptionService {
     private firebaseConfig;

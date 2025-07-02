@@ -2,7 +2,7 @@ import { GraphQLClient, gql } from "graphql-request";
 import { fromQuestionContentResponse, QuestionContent, QuestionContentResponse } from "./types/question-content";
 import logger from "../utils/logger";
 import { fromQuestionStatsResponse, QuestionStats, QuestionStatsResponse } from "./types/question-stats";
-import { fromUsersSubmissionsResponse, fromUserSubmissionsResponse, UserProblems, UserSubmission, UserSubmissionsResponse } from "./types/user-submission";
+import { fromUsersSubmissionsResponse, fromUserSubmissionsResponse, UserProblems, UserSubmission } from "./types/user-submission";
 
 const leetCodeEndpoint: string = "https://leetcode.com/graphql/";
 
@@ -45,7 +45,7 @@ async function getQuestionStatsByTitleSlug(titleSlug: string): Promise<QuestionS
 	return fromQuestionStatsResponse(response);
 }
 
-async function getUserRecentSubmissionsByUsername(username: string, limit: number = 10): Promise<UserSubmission[]> {
+async function getUserRecentSubmissionsByUsername(username: string, limit: number = 10): Promise<UserProblems> {
 	logger.info(`getting user recent submissions for username: ${username}`);
 	const query: string = gql`
 		query recentAcSubmissions($username: String!, $limit: Int!) {
@@ -62,8 +62,8 @@ async function getUserRecentSubmissionsByUsername(username: string, limit: numbe
 		limit: limit,
 	};
 	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
-	const response = await graphQLClient.request<UserSubmissionsResponse>(query, variables);
-	return fromUserSubmissionsResponse(response);
+	const response = await graphQLClient.request<UserSubmission>(query, variables);
+	return fromUserSubmissionsResponse(response, username);
 }
 
 async function validateLeetCodeAccount(leetcodeAccount: string): Promise<boolean> {
@@ -88,18 +88,8 @@ async function validateLeetCodeAccount(leetcodeAccount: string): Promise<boolean
 	}
 }
 
-async function getUsersRecentSubmissionsByUsernames(usernames: string[], limit: number = 10): Promise<UserSubmission[]> {
+async function getUsersRecentSubmissionsByUsernames(usernames: string[], limit: number = 10): Promise<UserProblems> {
 	logger.info(`getting user recent submissions for username: ${usernames.toString()}`);
-	// 	const query: string = gql`
-	// 	query recentAcSubmissions($username: String!, $limit: Int!) {
-	// 		recentAcSubmissionList(username: $username, limit: $limit) {
-	// 			id
-	// 			title
-	// 			titleSlug
-	// 			timestamp
-	// 		}
-	// 	}
-	// `;
 	let query: string = gql`
 		query recentAcSubmissions(${usernames.map((_, index) => `$username${index}: String!`).join(", ")}, $limit: Int!) {
 	`;

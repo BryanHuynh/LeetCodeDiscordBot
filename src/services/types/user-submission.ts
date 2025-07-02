@@ -1,21 +1,14 @@
-export type UserSubmissionsResponse = {
-	recentAcSubmissionList: Problem[];
-};
 
-export type UserSubmission = {
-	leetcode_id?: string;
-	id: string;
-	title: string;
-	titleSlug: string;
-	timestamp: string;
-	submissionUrl: string;
-};
+export interface UserSubmission {
+	recentAcSubmissionList: Problem[];
+}
 
 export interface Problem {
 	id: string;
 	title: string;
 	titleSlug: string;
 	timestamp: string;
+	submissionUrl?: string;
 }
 
 export interface UserProblems {
@@ -23,34 +16,29 @@ export interface UserProblems {
 }
 
 const submissionUrlTemplate = "https://leetcode.com/submissions/detail/";
-export function fromUserSubmissionsResponse(response: UserSubmissionsResponse): UserSubmission[] {
+export function fromUserSubmissionsResponse(response: UserSubmission, username: string): UserProblems {
 	const submissions = response.recentAcSubmissionList;
-
-	return submissions.map((submission) => ({
-		id: submission.id,
-		title: submission.title,
-		titleSlug: submission.titleSlug,
-		timestamp: new Date(Number.parseInt(submission.timestamp) * 1000).toString(),
-		submissionUrl: `${submissionUrlTemplate}${submission.id}/`,
-	}));
+	let problems: UserProblems = {};
+	submissions.forEach((submission) => {
+		const problem: Problem = {
+			id: submission.id,
+			title: submission.title,
+			titleSlug: submission.titleSlug,
+			timestamp: new Date(Number.parseInt(submission.timestamp) * 1000).toString(),
+			submissionUrl: `${submissionUrlTemplate}${submission.id}/`,
+		}
+		console.log(problem);
+		problems[username] = problems[username] ? [...problems[username], problem] : [problem];
+	});
+	return problems;
 }
 
-export function fromUsersSubmissionsResponse(response: UserProblems): UserSubmission[] {
-	const submissions: UserSubmission[] = [];
-
-	for (const username in response) {
-		const userSubmissions = response[username];
-		userSubmissions.forEach((submission) => {
-			submissions.push({
-				id: submission.id,
-				title: submission.title,
-				titleSlug: submission.titleSlug,
-				timestamp: submission.timestamp,
-				submissionUrl: `${submissionUrlTemplate}${submission.id}/`,
-				leetcode_id: username,
-			});
+export function fromUsersSubmissionsResponse(response: UserProblems): UserProblems {
+	for(let username in response) {
+		response[username].forEach((submission) => {
+			submission.submissionUrl = `${submissionUrlTemplate}${submission.id}/`;
 		});
 	}
+	return response;
 
-	return submissions;
 }

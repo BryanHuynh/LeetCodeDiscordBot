@@ -27,6 +27,5 @@ client.once(Events.ClientReady, () => {
 	subscriptionService.init();
 });
 
-getUsersRecentSubmissionsByUsernames(["BryanHuynh", "teja_1403", "mezbahuddin800", "Aryan_are_you_there", "Yamuna_java"], 5);
 
 client.login(process.env.DISCORD_TOKEN);

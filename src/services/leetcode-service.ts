@@ -1,127 +1,125 @@
 import { GraphQLClient, gql } from "graphql-request";
-import {
-  fromQuestionContentResponse,
-  QuestionContent,
-  QuestionContentResponse,
-} from "./types/question-content";
+import { fromQuestionContentResponse, QuestionContent, QuestionContentResponse } from "./types/question-content";
 import logger from "../utils/logger";
-import {
-  fromQuestionStatsResponse,
-  QuestionStats,
-  QuestionStatsResponse,
-} from "./types/question-stats";
-import {
-  fromUserSubmissionsResponse,
-  UserSubmission,
-  UserSubmissionsResponse,
-} from "./types/user-submission";
+import { fromQuestionStatsResponse, QuestionStats, QuestionStatsResponse } from "./types/question-stats";
+import { fromUsersSubmissionsResponse, fromUserSubmissionsResponse, UserProblems, UserSubmission, UserSubmissionsResponse } from "./types/user-submission";
 
 const leetCodeEndpoint: string = "https://leetcode.com/graphql/";
 
-async function getQuestionContentBySlug(
-  titleSlug: string
-): Promise<QuestionContent> {
-  logger.info(`Getting question content for slug: ${titleSlug}`);
-  const query: string = gql`
-    query questionContent($titleSlug: String!) {
-      question(titleSlug: $titleSlug) {
-        titleSlug
-        content
-      }
-    }
-  `;
-  const variables = {
-    titleSlug: titleSlug,
-  };
-  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
-  const response = await graphQLClient.request<QuestionContentResponse>(
-    query,
-    variables
-  );
-  return fromQuestionContentResponse(response);
+async function getQuestionContentBySlug(titleSlug: string): Promise<QuestionContent> {
+	logger.info(`Getting question content for slug: ${titleSlug}`);
+	const query: string = gql`
+		query questionContent($titleSlug: String!) {
+			question(titleSlug: $titleSlug) {
+				titleSlug
+				content
+			}
+		}
+	`;
+	const variables = {
+		titleSlug: titleSlug,
+	};
+	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+	const response = await graphQLClient.request<QuestionContentResponse>(query, variables);
+	return fromQuestionContentResponse(response);
 }
 
-async function getQuestionStatsByTitleSlug(
-  titleSlug: string
-): Promise<QuestionStats> {
-  logger.info(`getting question stats for slug: ${titleSlug}`);
-  const query: string = gql`
-    query questionStats($titleSlug: String!) {
-      question(titleSlug: $titleSlug) {
-        titleSlug
-        stats
-        difficulty
-        categoryTitle
-      }
-    }
-  `;
+async function getQuestionStatsByTitleSlug(titleSlug: string): Promise<QuestionStats> {
+	logger.info(`getting question stats for slug: ${titleSlug}`);
+	const query: string = gql`
+		query questionStats($titleSlug: String!) {
+			question(titleSlug: $titleSlug) {
+				titleSlug
+				stats
+				difficulty
+				categoryTitle
+			}
+		}
+	`;
 
-  const variables = {
-    titleSlug: titleSlug,
-  };
-  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
-  const response = await graphQLClient.request<QuestionStatsResponse>(
-    query,
-    variables
-  );
-  return fromQuestionStatsResponse(response);
+	const variables = {
+		titleSlug: titleSlug,
+	};
+	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+	const response = await graphQLClient.request<QuestionStatsResponse>(query, variables);
+	return fromQuestionStatsResponse(response);
 }
 
-async function getUserRecentSubmissionsByUsername(
-  username: string,
-  limit: number = 10
-): Promise<UserSubmission[]> {
-  logger.info(`getting user recent submissions for username: ${username}`);
-  const query: string = gql`
-    query recentAcSubmissions($username: String!, $limit: Int!) {
-      recentAcSubmissionList(username: $username, limit: $limit) {
-        id
-        title
-        titleSlug
-        timestamp
-      }
-    }
-  `;
-  const variables = {
-    username: username,
-    limit: limit,
-  };
-  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
-  const response = await graphQLClient.request<UserSubmissionsResponse>(
-    query,
-    variables
-  );
-  return fromUserSubmissionsResponse(response);
+async function getUserRecentSubmissionsByUsername(username: string, limit: number = 10): Promise<UserSubmission[]> {
+	logger.info(`getting user recent submissions for username: ${username}`);
+	const query: string = gql`
+		query recentAcSubmissions($username: String!, $limit: Int!) {
+			recentAcSubmissionList(username: $username, limit: $limit) {
+				id
+				title
+				titleSlug
+				timestamp
+			}
+		}
+	`;
+	const variables = {
+		username: username,
+		limit: limit,
+	};
+	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+	const response = await graphQLClient.request<UserSubmissionsResponse>(query, variables);
+	return fromUserSubmissionsResponse(response);
 }
 
-
-async function validateLeetCodeAccount(
-  leetcodeAccount: string
-): Promise<boolean> {
-  logger.info(`validating leetcode account: ${leetcodeAccount}`);
-  const query: string = gql`
-    query userPublicProfile($username: String!) {
-      matchedUser(username: $username) {
-        username
-      }
-    }
-  `;
-  const variables = {
-    username: leetcodeAccount,
-  };
-  const graphQLClient = new GraphQLClient(leetCodeEndpoint);
-  try {
-    const response: any = await graphQLClient.request(query, variables);
-    if(response.matchedUser) return true
-    return false;
-  } catch (e) {
-    return false;
-  }
+async function validateLeetCodeAccount(leetcodeAccount: string): Promise<boolean> {
+	logger.info(`validating leetcode account: ${leetcodeAccount}`);
+	const query: string = gql`
+		query userPublicProfile($username: String!) {
+			matchedUser(username: $username) {
+				username
+			}
+		}
+	`;
+	const variables = {
+		username: leetcodeAccount,
+	};
+	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+	try {
+		const response: any = await graphQLClient.request(query, variables);
+		if (response.matchedUser) return true;
+		return false;
+	} catch (e) {
+		return false;
+	}
 }
 
-export {
-  getQuestionContentBySlug,
-  getQuestionStatsByTitleSlug,
-  getUserRecentSubmissionsByUsername,
-  validateLeetCodeAccount,
-};
+async function getUsersRecentSubmissionsByUsernames(usernames: string[], limit: number = 10): Promise<UserSubmission[]> {
+	logger.info(`getting user recent submissions for username: ${usernames.toString()}`);
+	// 	const query: string = gql`
+	// 	query recentAcSubmissions($username: String!, $limit: Int!) {
+	// 		recentAcSubmissionList(username: $username, limit: $limit) {
+	// 			id
+	// 			title
+	// 			titleSlug
+	// 			timestamp
+	// 		}
+	// 	}
+	// `;
+	let query: string = gql`
+		query recentAcSubmissions(${usernames.map((_, index) => `$username${index}: String!`).join(", ")}, $limit: Int!) {
+	`;
+	for (let i = 0; i < usernames.length; i++) {
+		query += `${usernames[i]}: recentAcSubmissionList(username: $username${i}, limit: $limit) {
+					id
+					title
+					titleSlug
+					timestamp
+				}`;
+	}
+	query += "}";
+
+	let variables: any = {};
+	for (let i = 0; i < usernames.length; i++) {
+		variables[`username${i}`] = usernames[i];
+	}
+	variables["limit"] = limit;
+	const graphQLClient = new GraphQLClient(leetCodeEndpoint);
+	const response = await graphQLClient.request<UserProblems>(query, variables);
+	return fromUsersSubmissionsResponse(response);
+}
+export { getQuestionContentBySlug, getQuestionStatsByTitleSlug, getUserRecentSubmissionsByUsername, validateLeetCodeAccount, getUsersRecentSubmissionsByUsernames };

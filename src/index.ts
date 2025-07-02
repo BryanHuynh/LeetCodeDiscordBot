@@ -6,15 +6,12 @@ import { PingController } from "./controllers/ping-controller";
 import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
 import { FirestoreService } from "./services/firestore-service";
 import { ISubscriptionService } from "./services/i-subscription-service";
+import { getUsersRecentSubmissionsByUsernames } from "./services/leetcode-service";
 
 dotenv.config();
 
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-    ],
+	intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
 
 let pingController: PingController;
@@ -22,15 +19,14 @@ let linkingLeetCodeController: LinkingLeetCodeController;
 let subscriptionService: ISubscriptionService = new FirestoreService();
 
 client.once(Events.ClientReady, () => {
-    logger.info(`✅ Logged in as ${client.user?.tag}`);
-    pingController = new PingController(client);
-    pingController.init();
-    linkingLeetCodeController = new LinkingLeetCodeController(
-        client,
-        subscriptionService
-    );
-    linkingLeetCodeController.init();
-    subscriptionService.init();
+	logger.info(`✅ Logged in as ${client.user?.tag}`);
+	pingController = new PingController(client);
+	pingController.init();
+	linkingLeetCodeController = new LinkingLeetCodeController(client, subscriptionService);
+	linkingLeetCodeController.init();
+	subscriptionService.init();
 });
+
+getUsersRecentSubmissionsByUsernames(["BryanHuynh", "teja_1403", "mezbahuddin800", "Aryan_are_you_there", "Yamuna_java"], 5);
 
 client.login(process.env.DISCORD_TOKEN);

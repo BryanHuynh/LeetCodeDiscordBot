@@ -1,4 +1,4 @@
-import { DifficultyLevel, toDifficultyLevel } from "../../model/DifficultyLevel";
+import { DifficultyLevel, toDifficultyLevel } from "../../models/difficulty-level";
 
 type QuestionStatsResponse = {
   question: {

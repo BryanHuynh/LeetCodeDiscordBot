@@ -1,4 +1,4 @@
-import logger from "../utils/Logger";
+import logger from "../utils/logger";
 
 type DifficultyLevel = "Easy" | "Medium" | "Hard";
 const allowedDifficultyLevels = ["Easy", "Medium", "Hard"] as const;

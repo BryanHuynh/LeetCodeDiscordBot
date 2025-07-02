@@ -1,41 +1,36 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  Client,
-  EmbedBuilder,
-  Events,
-  GatewayIntentBits,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
-import { ping } from "./view/test";
-import {
-  getQuestionContentBySlug,
-  getQuestionStatsByTitleSlug,
-  getUserRecentSubmissionsByUsername,
-} from "./service/LeetCodeService";
-import logger from "./utils/Logger";
+
+import logger from "./utils/logger";
+import { PingController } from "./controllers/ping-controller";
+import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
+import { FirestoreService } from "./services/firestore-service";
+import { ISubscriptionService } from "./services/i-subscription-service";
 
 dotenv.config();
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+    ],
 });
 
-client.once("ready", () => {
-  logger.info(`✅ Logged in as ${client.user?.tag}`);
-});
+let pingController: PingController;
+let linkingLeetCodeController: LinkingLeetCodeController;
+let subscriptionService: ISubscriptionService = new FirestoreService();
 
-client.on("messageCreate", (message) => {
-  if (message.content === "!ping") {
-    ping(message, "pong").then((embed) => {
-      message.reply({ embeds: [embed] });
-    });
-  }
+client.once(Events.ClientReady, () => {
+    logger.info(`✅ Logged in as ${client.user?.tag}`);
+    pingController = new PingController(client);
+    pingController.init();
+    linkingLeetCodeController = new LinkingLeetCodeController(
+        client,
+        subscriptionService
+    );
+    linkingLeetCodeController.init();
+    subscriptionService.init();
 });
 
 client.login(process.env.DISCORD_TOKEN);

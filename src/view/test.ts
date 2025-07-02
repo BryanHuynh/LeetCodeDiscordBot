@@ -1,15 +1,12 @@
-import { EmbedBuilder, Message, OmitPartialGroupDMChannel } from "discord.js";
-import { LeetCodeSubmissionBuilder } from "../model/LeetCodeSubmissionBuilder";
-import LeetCodeSubmission from "../model/LeetCodeSubmission";
+import { CacheType, ChatInputCommandInteraction, EmbedBuilder, Message, OmitPartialGroupDMChannel } from "discord.js";
+import { LeetCodeSubmissionBuilder } from "../models/leetcode-submission-builder";
+import LeetCodeSubmission from "../models/leetcode-submission";
 
-async function ping(
-  user: OmitPartialGroupDMChannel<Message<boolean>>,
-  message: string
-) {
+async function ping(interaction: ChatInputCommandInteraction<CacheType>) {
   const lcs: LeetCodeSubmission =
     await new LeetCodeSubmissionBuilder().buildLatestSubmissionFromServices(
       "BryanHuynh",
-      user.author.id
+      interaction.user.id
     );
 
   return new EmbedBuilder()
@@ -22,7 +19,7 @@ async function ping(
         inline: true,
       },
       { name: "Difficulty", value: `${lcs.difficulty}`, inline: true },
-      { name: 'Submission link', value: `${lcs.submission_url}`}
+      { name: "Submission link", value: `${lcs.submission_url}` }
     )
     .setDescription(lcs.problem_description)
     .setFooter({

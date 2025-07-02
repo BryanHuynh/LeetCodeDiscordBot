@@ -1,5 +1,5 @@
-import { DifficultyLevel } from "./DifficultyLevel";
-import LeetCodeSubmissionBuilder from "./LeetCodeSubmissionBuilder";
+import { DifficultyLevel } from "./difficulty-level";
+import LeetCodeSubmissionBuilder from "./leetcode-submission-builder";
 
 class LeetCodeSubmission {
   user: string;

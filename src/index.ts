@@ -1,12 +1,12 @@
 import { Client, Events, GatewayIntentBits } from "discord.js";
 import dotenv from "dotenv";
 
-import logger from "./utils/logger";
 import { PingController } from "./controllers/ping-controller";
 import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
 import { FirestoreService } from "./services/firestore-service";
 import { ISubscriptionService } from "./services/i-subscription-service";
 import { getUsersRecentSubmissionsByUsernames } from "./services/leetcode-service";
+import logger from "./utils/logger";
 
 dotenv.config();
 

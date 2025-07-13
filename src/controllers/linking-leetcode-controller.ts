@@ -72,7 +72,8 @@ export class LinkingLeetCodeController {
                     this.subscriptionService.subscribe(
                         response,
                         interaction.user.username,
-                        interaction.guildId!
+                        interaction.guildId!,
+                        interaction.guild!.name
                     );
                     await interaction.reply(
                         `Your leetcode account is: ${response} linked`

@@ -33,7 +33,8 @@ export class FirestoreService implements ISubscriptionService {
     async subscribe(
         id: string,
         discord_id: string,
-        guild_id: string
+        guild_id: string,
+        guild_name: string
     ): Promise<boolean> {
         if (this.firebaseApp == undefined || this.db == undefined) {
             logger.error("firebase app or db not initialized");

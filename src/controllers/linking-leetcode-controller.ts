@@ -19,7 +19,7 @@ export class LinkingLeetCodeController {
     constructor(client: Client, subscriptionService: ISubscriptionService) {
         this.client = client;
         this.linkingLeetCodeCommand = new SlashCommandBuilder()
-            .setName("linkleetcode")
+            .setName("subscribe")
             .setDescription("Link your Discord with your LeetCode account");
         this.subscriptionService = subscriptionService;
     }
@@ -33,7 +33,7 @@ export class LinkingLeetCodeController {
 
         this.client.on(Events.InteractionCreate, async (interaction) => {
             if (!interaction.isChatInputCommand()) return;
-            if (interaction.commandName === "linkleetcode") {
+            if (interaction.commandName === "subscribe") {
                 const modal = new ModalBuilder()
                     .setCustomId("LinkLeetCodeModal")
                     .setTitle("Link your leetcode account with Discord");

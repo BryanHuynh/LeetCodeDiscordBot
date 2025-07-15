@@ -10,7 +10,7 @@ export class LeetcodeScheduler {
         this.databaseService = databaseService;
     }
 
-	start(jobFunc: (dbService: ISubscriptionService) => void) {
+	start(jobFunc: (dbService: ISubscriptionService) => Promise<{ [key: string]: String[] }>) {
         logger.info("starting leetcode scheduler");
 
 		this.job = cron.schedule("*/5 * * * *", () => {

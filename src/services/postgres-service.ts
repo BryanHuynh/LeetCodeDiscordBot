@@ -110,18 +110,34 @@ export class PostgresService implements ISubscriptionService {
 	}
 
 	async populateUserACs(leetcode_id: string): Promise<boolean> {
-		 try {
+		try {
 			const acs = await getUserRecentSubmissionsByUsername(leetcode_id);
 			const problems: Problem[] = acs[leetcode_id];
-			problems.forEach( async (problem: Problem) => {
-				const res = await this.pool.query('INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID) VALUES ($1, $2)', [problem.id, leetcode_id]);
-				logger.info('added ac completion:' + problem.id + ' ' + leetcode_id)
-			})
+			if(problems.length == 0) return Promise.resolve(true);
+			problems.forEach(async (problem: Problem) => {
+				const res = await this.pool.query("INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID, TIMESTAMP) VALUES ($1, $2, $3)", [
+					problem.id,
+					leetcode_id,
+					new Date(problem.timestamp).toISOString(),
+				]);
+				logger.info("added ac completion:" + problem.id + " " + leetcode_id);
+			});
 			return Promise.resolve(true);
-		 } catch (err) {
+		} catch (err) {
 			logger.error("error populating user acs: " + err);
 			return Promise.resolve(false);
-		 }
+		}
+	}
+
+	async getUserACIds(leetcode_id: string): Promise<String[]> {
+		try {
+			const res = await this.pool.query("SELECT AC_ID FROM AC_COMPLETION WHERE LEETCODE_ID = $1 ORDER BY TIMESTAMP DESC LIMIT 5", [leetcode_id]);
+			logger.info("selecting user acs: " + leetcode_id);
+			return Promise.resolve(res.rows.map((row) => row.ac_id));
+		} catch (err) {
+			logger.error("error adding subscription: " + err);
+			return Promise.resolve([]);
+		}
 	}
 
 	async checkIfSubscriptionToGuildAndLeetcodeAccountExists(leetcode_id: string, guild_id: string): Promise<boolean> {

@@ -26,6 +26,12 @@ export class FirestoreService implements ISubscriptionService {
             measurementId: process.env.FIREBASE_MEASUREMENT_ID,
         };
     }
+    getUserACIds(leetcode_id: string): Promise<String[]> {
+        throw new Error("Method not implemented.");
+    }
+    getLeetcodeAccounts(): Promise<string[]> {
+        throw new Error("Method not implemented.");
+    }
     checkSubscriptionValid(id: string, discord_id: string, guild_id: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }

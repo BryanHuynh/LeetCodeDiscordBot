@@ -71,6 +71,7 @@ export class LinkingLeetCodeController {
                     );
                     this.subscriptionService.subscribe(
                         response,
+                        interaction.user.id,
                         interaction.user.username,
                         interaction.guildId!,
                         interaction.guild!.name

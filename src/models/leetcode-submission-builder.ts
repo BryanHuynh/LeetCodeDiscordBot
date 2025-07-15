@@ -79,17 +79,20 @@ export class LeetCodeSubmissionBuilder {
 		return new LeetCodeSubmission(this);
 	}
 
-	public async buildLatestSubmissionFromServices(username: string, discord_name: string): Promise<LeetCodeSubmission> {
-		const userProblem: UserProblems = await getUserRecentSubmissionsByUsername(username);
-		if (userProblem[username].length == 0) {
-			logger.error(`unable to find submissions for ${username}`);
+	public async buildLatestSubmissionFromServices(leetcode_id: string, discord_name: string): Promise<LeetCodeSubmission> {
+		const userProblem: UserProblems = await getUserRecentSubmissionsByUsername(leetcode_id);
+		if (userProblem[leetcode_id].length == 0) {
+			logger.error(`unable to find submissions for ${leetcode_id}`);
 		}
-		const [questionContent, questionStat] = await Promise.all([getQuestionContentBySlug(userProblem[username][0].titleSlug), getQuestionStatsByTitleSlug(userProblem[username][0].titleSlug)]);
+		const [questionContent, questionStat] = await Promise.all([
+			getQuestionContentBySlug(userProblem[leetcode_id][0].titleSlug),
+			getQuestionStatsByTitleSlug(userProblem[leetcode_id][0].titleSlug),
+		]);
 
 		const builder: LeetCodeSubmissionBuilder = new LeetCodeSubmissionBuilder()
-			.withUser(username)
+			.withUser(leetcode_id)
 			.withDiscordName(discord_name)
-			.withProblemName(userProblem[username][0].title)
+			.withProblemName(userProblem[leetcode_id][0].title)
 			.withProblemDescription(questionContent.content)
 			.withCategory(questionStat.category)
 			.withProblemUrl(`https://leetcode.com/problems/${questionContent.titleSlug}/description/`)
@@ -97,7 +100,28 @@ export class LeetCodeSubmissionBuilder {
 			.withAcceptedSubmissions(questionStat.stats.totalSubmissions)
 			.withTotalSubmissions(questionStat.stats.totalSubmissions)
 			.withAcceptedRate(questionStat.stats.acceptanceRate)
-			.withSubmissionUrl(userProblem[username][0].submissionUrl);
+			.withSubmissionUrl(userProblem[leetcode_id][0].submissionUrl);
+		return builder.build();
+	}
+
+	public async buildSubmissionFromServices(submission_id: string): Promise<LeetCodeSubmission> {
+		const [questionContent, questionStat] = await Promise.all([
+			getQuestionContentBySlug(userProblem[submission_id][0].titleSlug),
+			getQuestionStatsByTitleSlug(userProblem[submission_id][0].titleSlug),
+		]);
+
+		const builder: LeetCodeSubmissionBuilder = new LeetCodeSubmissionBuilder()
+			.withUser(leetcode_id)
+			.withDiscordName(discord_name)
+			.withProblemName(userProblem[leetcode_id][0].title)
+			.withProblemDescription(questionContent.content)
+			.withCategory(questionStat.category)
+			.withProblemUrl(`https://leetcode.com/problems/${questionContent.titleSlug}/description/`)
+			.withDifficulty(questionStat.difficulty)
+			.withAcceptedSubmissions(questionStat.stats.totalSubmissions)
+			.withTotalSubmissions(questionStat.stats.totalSubmissions)
+			.withAcceptedRate(questionStat.stats.acceptanceRate)
+			.withSubmissionUrl(userProblem[leetcode_id][0].submissionUrl);
 		return builder.build();
 	}
 }

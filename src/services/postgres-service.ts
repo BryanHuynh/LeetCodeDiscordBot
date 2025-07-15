@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import logger from "../utils/logger";
 import { getUserRecentSubmissionsByUsername } from "./leetcode-service";
 import { Problem, UserProblems } from "./types/user-submission";
+import { ISubscriptions } from "./types/subscriptions";
 
 export class PostgresService implements ISubscriptionService {
 	private pgConfig: PoolConfig;
@@ -29,9 +30,9 @@ export class PostgresService implements ISubscriptionService {
 		});
 	}
 
-	async subscribe(id: string, discord_id: string, guild_id: string, guild_name: string): Promise<boolean> {
+	async subscribe(id: string, discord_id: string, discord_username: string, guild_id: string, guild_name: string): Promise<boolean> {
 		try {
-			await this.addDiscordAccount(discord_id);
+			await this.addDiscordAccount(discord_id, discord_username);
 			await this.addLeetcodeAccount(id);
 			await this.addGuild(guild_id, guild_name);
 			await this.addSubscription(discord_id, id, guild_id);
@@ -61,9 +62,9 @@ export class PostgresService implements ISubscriptionService {
 		throw new Error("Method not implemented.");
 	}
 
-	async addDiscordAccount(discord_id: string): Promise<boolean> {
+	async addDiscordAccount(discord_id: string, discord_username: string): Promise<boolean> {
 		try {
-			const res = await this.pool.query("INSERT INTO DISCORD_ACCOUNT (id) VALUES ($1)", [discord_id]);
+			const res = await this.pool.query("INSERT INTO DISCORD_ACCOUNT (id, username) VALUES ($1, $2)", [discord_id, discord_username]);
 			logger.info("added discord account: " + discord_id);
 		} catch (err) {
 			logger.error("error adding discord account: " + err);
@@ -113,14 +114,18 @@ export class PostgresService implements ISubscriptionService {
 		try {
 			const acs = await getUserRecentSubmissionsByUsername(leetcode_id);
 			const problems: Problem[] = acs[leetcode_id];
-			if(problems.length == 0) return Promise.resolve(true);
+			if (problems.length == 0) return Promise.resolve(true);
 			problems.forEach(async (problem: Problem) => {
-				const res = await this.pool.query("INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID, TIMESTAMP) VALUES ($1, $2, $3)", [
-					problem.id,
-					leetcode_id,
-					new Date(problem.timestamp).toISOString(),
-				]);
-				logger.info("added ac completion:" + problem.id + " " + leetcode_id);
+				try {
+					const res = await this.pool.query("INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID, TIMESTAMP) VALUES ($1, $2, $3)", [
+						problem.id,
+						leetcode_id,
+						new Date(problem.timestamp).toISOString(),
+					]);
+					logger.info("added ac completion:" + problem.id + " " + leetcode_id);
+				} catch (err) {
+					logger.error("error adding ac completion: " + err);
+				}
 			});
 			return Promise.resolve(true);
 		} catch (err) {
@@ -138,6 +143,17 @@ export class PostgresService implements ISubscriptionService {
 			logger.error("error adding subscription: " + err);
 			return Promise.resolve([]);
 		}
+	}
+
+	async getSubscriptionsBasedOnLeetcodeId(leetcode_id: string): Promise<ISubscriptions[]> {
+		try {
+			const res = await this.pool.query<ISubscriptions>("SELECT LEETCODE_ID, DISCORD_ID, GUILD_ID FROM SUBSCRIPTION WHERE LEETCODE_ID = $1", [leetcode_id]);
+			logger.info("getting subscriptions based on leetcode id");
+			return Promise.resolve(res.rows);
+		} catch (err) {
+			logger.error("error getting subscriptions based on leetcode id: " + err);
+		}
+		return Promise.resolve([]);
 	}
 
 	async checkIfSubscriptionToGuildAndLeetcodeAccountExists(leetcode_id: string, guild_id: string): Promise<boolean> {

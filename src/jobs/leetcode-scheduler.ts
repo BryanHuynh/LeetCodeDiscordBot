@@ -1,6 +1,7 @@
 import cron, { ScheduledTask } from "node-cron";
 import { ISubscriptionService } from "../services/i-subscription-service";
 import logger from "../utils/logger";
+import { UserProblems } from "../services/types/user-submission";
 
 export class LeetcodeScheduler {
 	private job: ScheduledTask | null = null;
@@ -10,7 +11,7 @@ export class LeetcodeScheduler {
         this.databaseService = databaseService;
     }
 
-	start(jobFunc: (dbService: ISubscriptionService) => Promise<{ [key: string]: String[] }>) {
+	start(jobFunc: (dbService: ISubscriptionService) => Promise<void>) {
         logger.info("starting leetcode scheduler");
 
 		this.job = cron.schedule("*/5 * * * *", () => {

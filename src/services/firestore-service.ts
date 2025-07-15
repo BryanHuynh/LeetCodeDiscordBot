@@ -39,6 +39,7 @@ export class FirestoreService implements ISubscriptionService {
     async subscribe(
         id: string,
         discord_id: string,
+        discord_username: string,
         guild_id: string,
         guild_name: string
     ): Promise<boolean> {

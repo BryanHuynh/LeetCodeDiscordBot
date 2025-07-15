@@ -21,6 +21,7 @@ export class PingController {
         this.client.on("interactionCreate", async (interaction) => {
             if (!interaction.isChatInputCommand()) return;
             if (interaction.commandName === "ping") {
+                console.log(interaction.user)
                 const embed = await ping(interaction);
                 const reply = await interaction.reply({
                     embeds: [embed],

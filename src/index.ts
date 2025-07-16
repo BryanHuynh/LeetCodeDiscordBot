@@ -22,7 +22,7 @@ const client = new Client({
 let pingController: PingController;
 let linkingLeetCodeController: LinkingLeetCodeController;
 let subscriptionService: ISubscriptionService = new PostgresService();
-let leetcodeScheduler: LeetcodeScheduler = new LeetcodeScheduler(subscriptionService);
+let leetcodeScheduler: LeetcodeScheduler = new LeetcodeScheduler(subscriptionService, client);
 
 client.once(Events.ClientReady, () => {
 	logger.info(`✅ Logged in as ${client.user?.tag}`);

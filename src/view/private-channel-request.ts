@@ -1,6 +1,6 @@
 import { Client, Guild, Message, PermissionsBitField, TextChannel, User } from "discord.js";
 import LeetCodeSubmission from "../models/leetcode-submission";
-import { EmbedLeetcodeSubmissionMessage } from "./embed-leetcode-submission-message";
+import { acMessageActionButtonRow, EmbedLeetcodeSubmissionMessage } from "./embed-leetcode-submission-message";
 import logger from "../utils/logger";
 
 export const createPrivateChannelRequest = async (guild: Guild, user: User, lcs: LeetCodeSubmission): Promise<TextChannel | null> => {
@@ -31,9 +31,11 @@ export const createPrivateChannelRequest = async (guild: Guild, user: User, lcs:
 };
 
 export const createPrivateChannelMessage = async (channel: TextChannel, lcs: LeetCodeSubmission): Promise<Message | null> => {
+	
 	try {
 		const message = await channel.send({
 			embeds: [EmbedLeetcodeSubmissionMessage(lcs)],
+			components: [acMessageActionButtonRow()],
 		});
 		return Promise.resolve(message);
 	} catch (err) {

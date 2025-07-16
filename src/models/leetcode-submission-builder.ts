@@ -1,6 +1,6 @@
 import { getQuestionContentBySlug, getQuestionStatsByTitleSlug, getUserRecentSubmissionsByUsername } from "../services/leetcode-service";
 import { QuestionContent } from "../services/types/question-content";
-import { UserProblems, UserSubmission } from "../services/types/user-submission";
+import { Problem, UserProblems, UserSubmission } from "../services/types/user-submission";
 import logger from "../utils/logger";
 import { DifficultyLevel } from "./difficulty-level";
 import LeetCodeSubmission from "./leetcode-submission";
@@ -104,16 +104,16 @@ export class LeetCodeSubmissionBuilder {
 		return builder.build();
 	}
 
-	public async buildSubmissionFromServices(submission_id: string): Promise<LeetCodeSubmission> {
+	public async buildSubmissionFromServices(problem: Problem, leetcode_id: string, discord_name: string): Promise<LeetCodeSubmissionBuilder> {
 		const [questionContent, questionStat] = await Promise.all([
-			getQuestionContentBySlug(userProblem[submission_id][0].titleSlug),
-			getQuestionStatsByTitleSlug(userProblem[submission_id][0].titleSlug),
+			getQuestionContentBySlug(problem.titleSlug),
+			getQuestionStatsByTitleSlug(problem.titleSlug),
 		]);
 
 		const builder: LeetCodeSubmissionBuilder = new LeetCodeSubmissionBuilder()
 			.withUser(leetcode_id)
 			.withDiscordName(discord_name)
-			.withProblemName(userProblem[leetcode_id][0].title)
+			.withProblemName(problem.title)
 			.withProblemDescription(questionContent.content)
 			.withCategory(questionStat.category)
 			.withProblemUrl(`https://leetcode.com/problems/${questionContent.titleSlug}/description/`)
@@ -121,8 +121,8 @@ export class LeetCodeSubmissionBuilder {
 			.withAcceptedSubmissions(questionStat.stats.totalSubmissions)
 			.withTotalSubmissions(questionStat.stats.totalSubmissions)
 			.withAcceptedRate(questionStat.stats.acceptanceRate)
-			.withSubmissionUrl(userProblem[leetcode_id][0].submissionUrl);
-		return builder.build();
+			.withSubmissionUrl(problem.submissionUrl);
+		return builder;
 	}
 }
 

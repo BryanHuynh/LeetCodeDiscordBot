@@ -1,12 +1,18 @@
 import { Client, Guild, Message, PermissionsBitField, TextChannel, User } from "discord.js";
 import LeetCodeSubmission from "../models/leetcode-submission";
-import { acMessageActionButtonRow, EmbedLeetcodeSubmissionMessage } from "./embed-leetcode-submission-message";
+import {
+	acMessageActionButtonRow,
+	EmbedLeetcodeSubmissionMessage,
+} from "./embed-leetcode-submission-message";
 import logger from "../utils/logger";
 
-export const createPrivateChannelRequest = async (guild: Guild, user: User, lcs: LeetCodeSubmission): Promise<TextChannel | null> => {
+export const createPrivateChannelRequest = async (
+	guild: Guild,
+	user: User
+): Promise<TextChannel | null> => {
 	try {
 		const channel = await guild.channels.create({
-			name: `private-${user.username}-${lcs.problem_name}`,
+			name: `LeetBro Accepted Problems`,
 			type: 0,
 			permissionOverwrites: [
 				{
@@ -15,11 +21,20 @@ export const createPrivateChannelRequest = async (guild: Guild, user: User, lcs:
 				},
 				{
 					id: user.id,
-					allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory],
+					allow: [
+						PermissionsBitField.Flags.ViewChannel,
+						PermissionsBitField.Flags.SendMessages,
+						PermissionsBitField.Flags.ReadMessageHistory,
+					],
 				},
 				{
 					id: guild.members.me!.id,
-					allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages, PermissionsBitField.Flags.ReadMessageHistory, PermissionsBitField.Flags.ManageChannels],
+					allow: [
+						PermissionsBitField.Flags.ViewChannel,
+						PermissionsBitField.Flags.SendMessages,
+						PermissionsBitField.Flags.ReadMessageHistory,
+						PermissionsBitField.Flags.ManageChannels,
+					],
 				},
 			],
 		});
@@ -30,8 +45,10 @@ export const createPrivateChannelRequest = async (guild: Guild, user: User, lcs:
 	return Promise.resolve(null);
 };
 
-export const createPrivateChannelMessage = async (channel: TextChannel, lcs: LeetCodeSubmission): Promise<Message | null> => {
-	
+export const sendPrivateChannelLCS = async (
+	channel: TextChannel,
+	lcs: LeetCodeSubmission
+): Promise<Message | null> => {
 	try {
 		const message = await channel.send({
 			embeds: [EmbedLeetcodeSubmissionMessage(lcs)],
@@ -40,6 +57,23 @@ export const createPrivateChannelMessage = async (channel: TextChannel, lcs: Lee
 		return Promise.resolve(message);
 	} catch (err) {
 		logger.error("failed to create embed Message", err);
+	}
+	return Promise.resolve(null);
+};
+
+export const sendPrivateChannelGreetingMessage = async (
+	channel: TextChannel,
+	discord_user: User,
+	leetcode_id: string
+) => {
+	try {
+		const message = await channel.send(
+			`Thank you for linking your leetcode account: ${leetcode_id} to your discord account: ${discord_user.username}. \n` +
+				`When you complete a leetcode problem, we will update you here in this thread if you want to share your submission results with the reset of the server`
+		);
+		return Promise.resolve(message);
+	} catch (err) {
+		logger.error("failed to create greeting Message", err);
 	}
 	return Promise.resolve(null);
 };

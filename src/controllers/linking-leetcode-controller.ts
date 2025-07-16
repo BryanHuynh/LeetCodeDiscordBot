@@ -79,6 +79,7 @@ export class LinkingLeetCodeController {
                     await interaction.reply(
                         `Your leetcode account is: ${response} linked`
                     );
+                    
                 }
             }
         });

@@ -7,5 +7,7 @@ export interface ISubscriptionService {
     checkSubscriptionValid(id: string, discord_id: string, guild_id: string): Promise<boolean>;
     getLeetcodeAccounts(): Promise<string[]>;
     getSubscriptionsBasedOnLeetcodeId(leetcode_id: string): Promise<ISubscriptions[]>;
+    saveChannel(channel_id: string, guild_id: string, discord_id: string): Promise<boolean>;
+    retrieveChannel(guild_id: string, discord_id: string): Promise<string | null>;
     init(): void;
 }

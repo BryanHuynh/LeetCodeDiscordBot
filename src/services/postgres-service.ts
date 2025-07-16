@@ -30,7 +30,13 @@ export class PostgresService implements ISubscriptionService {
 		});
 	}
 
-	async subscribe(id: string, discord_id: string, discord_username: string, guild_id: string, guild_name: string): Promise<boolean> {
+	async subscribe(
+		id: string,
+		discord_id: string,
+		discord_username: string,
+		guild_id: string,
+		guild_name: string
+	): Promise<boolean> {
 		try {
 			await this.addDiscordAccount(discord_id, discord_username);
 			await this.addLeetcodeAccount(id);
@@ -64,7 +70,10 @@ export class PostgresService implements ISubscriptionService {
 
 	async addDiscordAccount(discord_id: string, discord_username: string): Promise<boolean> {
 		try {
-			const res = await this.pool.query("INSERT INTO DISCORD_ACCOUNT (id, username) VALUES ($1, $2)", [discord_id, discord_username]);
+			const res = await this.pool.query(
+				"INSERT INTO DISCORD_ACCOUNT (id, username) VALUES ($1, $2)",
+				[discord_id, discord_username]
+			);
 			logger.info("added discord account: " + discord_id);
 		} catch (err) {
 			logger.error("error adding discord account: " + err);
@@ -75,7 +84,9 @@ export class PostgresService implements ISubscriptionService {
 
 	async addLeetcodeAccount(leetcode_id: string): Promise<boolean> {
 		try {
-			const res = await this.pool.query("INSERT INTO LEETCODE_ACCOUNT (id) VALUES ($1)", [leetcode_id]);
+			const res = await this.pool.query("INSERT INTO LEETCODE_ACCOUNT (id) VALUES ($1)", [
+				leetcode_id,
+			]);
 			logger.info("added leetcode account: " + leetcode_id);
 		} catch (err) {
 			logger.error("error adding leetcode account: " + err);
@@ -86,7 +97,10 @@ export class PostgresService implements ISubscriptionService {
 
 	async addGuild(guild_id: string, guild_name: string): Promise<boolean> {
 		try {
-			const res = await this.pool.query("INSERT INTO GUILD (id, guild_name) VALUES ($1, $2)", [guild_id, guild_name]);
+			const res = await this.pool.query(
+				"INSERT INTO GUILD (id, guild_name) VALUES ($1, $2)",
+				[guild_id, guild_name]
+			);
 			logger.info("added guild: " + guild_id);
 		} catch (err) {
 			logger.error("error adding guild: " + err);
@@ -95,18 +109,56 @@ export class PostgresService implements ISubscriptionService {
 		return Promise.resolve(true);
 	}
 
-	async addSubscription(discord_id: string, leetcode_id: string, guild_id: string): Promise<boolean> {
+	async addSubscription(
+		discord_id: string,
+		leetcode_id: string,
+		guild_id: string
+	): Promise<boolean> {
 		if (await this.checkIfSubscriptionToGuildAndLeetcodeAccountExists(leetcode_id, guild_id)) {
-			logger.info("subscription already exists: " + discord_id + " " + leetcode_id + " " + guild_id);
+			logger.info(
+				"subscription already exists: " + discord_id + " " + leetcode_id + " " + guild_id
+			);
 			return Promise.resolve(false);
 		}
 		try {
-			const res = await this.pool.query("INSERT INTO SUBSCRIPTION (discord_id, leetcode_id, guild_id) VALUES ($1, $2, $3)", [discord_id, leetcode_id, guild_id]);
+			const res = await this.pool.query(
+				"INSERT INTO SUBSCRIPTION (discord_id, leetcode_id, guild_id) VALUES ($1, $2, $3)",
+				[discord_id, leetcode_id, guild_id]
+			);
 			logger.info("added subscription: " + discord_id + " " + leetcode_id + " " + guild_id);
 			return Promise.resolve(true);
 		} catch (err) {
 			logger.error("error adding subscription: " + err);
 			return Promise.resolve(false);
+		}
+	}
+
+	async saveChannel(channel_id: string, guild_id: string, discord_id: string): Promise<boolean> {
+		try {
+			const res = await this.pool.query(
+				"INSERT INTO CHANNEL (id, guild_id, discord_id) VALUES ($1, $2, $3)",
+				[channel_id, guild_id, discord_id]
+			);
+			logger.info("saved channel: " + channel_id + " " + guild_id + " " + discord_id);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error("error adding subscription: " + err);
+			return Promise.resolve(false);
+		}
+	}
+
+	async retrieveChannel(guild_id: string, discord_id: string): Promise<string | null> {
+		try {
+			const res = await this.pool.query(
+				"SELECT id FROM CHANNEL WHERE guild_id = $1 AND discord_id = $2 LIMIT 1",
+				[guild_id, discord_id]
+			);
+			if( res.rows.length == 0 ) return Promise.resolve(null);
+			logger.info("retrieved channel: " + " " + guild_id + " " + discord_id + " " + res.rows[0].id);
+			return Promise.resolve(res.rows[0].id);
+		} catch (err) {
+			logger.error("error adding subscription: " + err);
+			return Promise.resolve(null);
 		}
 	}
 
@@ -117,11 +169,10 @@ export class PostgresService implements ISubscriptionService {
 			if (problems.length == 0) return Promise.resolve(true);
 			problems.forEach(async (problem: Problem) => {
 				try {
-					const res = await this.pool.query("INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID, TIMESTAMP) VALUES ($1, $2, $3)", [
-						problem.id,
-						leetcode_id,
-						new Date(problem.timestamp).toISOString(),
-					]);
+					const res = await this.pool.query(
+						"INSERT INTO AC_COMPLETION (AC_ID, LEETCODE_ID, TIMESTAMP) VALUES ($1, $2, $3)",
+						[problem.id, leetcode_id, new Date(problem.timestamp).toISOString()]
+					);
 					logger.info("added ac completion:" + problem.id + " " + leetcode_id);
 				} catch (err) {
 					logger.error("error adding ac completion: " + err);
@@ -136,7 +187,10 @@ export class PostgresService implements ISubscriptionService {
 
 	async getUserACIds(leetcode_id: string): Promise<String[]> {
 		try {
-			const res = await this.pool.query("SELECT AC_ID FROM AC_COMPLETION WHERE LEETCODE_ID = $1 ORDER BY TIMESTAMP DESC LIMIT 5", [leetcode_id]);
+			const res = await this.pool.query(
+				"SELECT AC_ID FROM AC_COMPLETION WHERE LEETCODE_ID = $1 ORDER BY TIMESTAMP DESC LIMIT 5",
+				[leetcode_id]
+			);
 			logger.info("selecting user acs: " + leetcode_id);
 			return Promise.resolve(res.rows.map((row) => row.ac_id));
 		} catch (err) {
@@ -147,7 +201,10 @@ export class PostgresService implements ISubscriptionService {
 
 	async getSubscriptionsBasedOnLeetcodeId(leetcode_id: string): Promise<ISubscriptions[]> {
 		try {
-			const res = await this.pool.query<ISubscriptions>("SELECT LEETCODE_ID, DISCORD_ID, GUILD_ID FROM SUBSCRIPTION WHERE LEETCODE_ID = $1", [leetcode_id]);
+			const res = await this.pool.query<ISubscriptions>(
+				"SELECT LEETCODE_ID, DISCORD_ID, GUILD_ID FROM SUBSCRIPTION WHERE LEETCODE_ID = $1",
+				[leetcode_id]
+			);
 			logger.info("getting subscriptions based on leetcode id");
 			return Promise.resolve(res.rows);
 		} catch (err) {
@@ -156,9 +213,15 @@ export class PostgresService implements ISubscriptionService {
 		return Promise.resolve([]);
 	}
 
-	async checkIfSubscriptionToGuildAndLeetcodeAccountExists(leetcode_id: string, guild_id: string): Promise<boolean> {
+	async checkIfSubscriptionToGuildAndLeetcodeAccountExists(
+		leetcode_id: string,
+		guild_id: string
+	): Promise<boolean> {
 		try {
-			const res = await this.pool.query("SELECT * FROM SUBSCRIPTION WHERE leetcode_id = $1 AND guild_id = $2", [leetcode_id, guild_id]);
+			const res = await this.pool.query(
+				"SELECT * FROM SUBSCRIPTION WHERE leetcode_id = $1 AND guild_id = $2",
+				[leetcode_id, guild_id]
+			);
 			if (res.rows.length > 0) {
 				return Promise.resolve(true);
 			}

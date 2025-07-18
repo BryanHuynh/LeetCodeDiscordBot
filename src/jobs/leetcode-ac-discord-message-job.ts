@@ -42,6 +42,7 @@ export const leetcodeAcDiscordMessageJob = async (
 					logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
 				}
 			}
+			await dbService.saveAC(ac.id, leetcode_id, parseInt(ac.timestamp));
 		}
 	}
 };

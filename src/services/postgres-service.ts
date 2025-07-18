@@ -75,11 +75,26 @@ export class PostgresService implements ISubscriptionService {
 				[discord_id, discord_username]
 			);
 			logger.info("added discord account: " + discord_id);
+			return Promise.resolve(true);
 		} catch (err) {
 			logger.error("error adding discord account: " + err);
 			return Promise.resolve(false);
 		}
-		return Promise.resolve(true);
+	}
+
+	async saveAC(id: string, leetcode_id: string, timestamp: number): Promise<boolean> {
+		try {
+			console.log(timestamp);
+			const res = await this.pool.query(
+				"INSERT INTO AC_COMPLETION (ac_id, leetcode_id, timestamp) VALUES ($1, $2, $3)",
+				[id, leetcode_id, new Date(timestamp * 1000).toISOString()]
+			);
+			logger.info(`saved ac ${id} for leetcode ${leetcode_id}`);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error("error adding ac account: " + err);
+			return Promise.resolve(false);
+		}
 	}
 
 	async addLeetcodeAccount(leetcode_id: string): Promise<boolean> {
@@ -153,8 +168,10 @@ export class PostgresService implements ISubscriptionService {
 				"SELECT id FROM CHANNEL WHERE guild_id = $1 AND discord_id = $2 LIMIT 1",
 				[guild_id, discord_id]
 			);
-			if( res.rows.length == 0 ) return Promise.resolve(null);
-			logger.info("retrieved channel: " + " " + guild_id + " " + discord_id + " " + res.rows[0].id);
+			if (res.rows.length == 0) return Promise.resolve(null);
+			logger.info(
+				"retrieved channel: " + " " + guild_id + " " + discord_id + " " + res.rows[0].id
+			);
 			return Promise.resolve(res.rows[0].id);
 		} catch (err) {
 			logger.error("error adding subscription: " + err);

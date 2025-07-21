@@ -22,12 +22,11 @@ export const EmbedLeetcodeSubmissionMessage = (lcs: LeetCodeSubmission): EmbedBu
 };
 
 export const acMessageActionButtonRow = () => {
-	return new ActionRowBuilder<ButtonBuilder>().addComponents(bottonComponent("SHARE"), bottonComponent("DO NOT SHARE"));
-};
+	return new ActionRowBuilder<ButtonBuilder>().addComponents(bottonComponent())};
 
-const bottonComponent = (action: "SHARE" | "DO NOT SHARE") => {
+const bottonComponent = () => {
 	return new ButtonBuilder()
-		.setCustomId(`BUTTON_ACTION_${action}_AC_MESSAGE`)
-		.setLabel(action)
-		.setStyle(action == 'SHARE' ? ButtonStyle.Success : ButtonStyle.Danger); 
+		.setCustomId(`Share_AC_Button`)
+		.setLabel("SHARE")
+		.setStyle(ButtonStyle.Success ); 
 };

@@ -97,6 +97,34 @@ export class PostgresService implements ISubscriptionService {
 		}
 	}
 
+	async assignSubmissionChannel(guild_id: string, channel_id: string): Promise<boolean> {
+		try {
+			const res = await this.pool.query("UPDATE GUILD SET submission_channel_id = ($1) WHERE id = ($2)", 
+				[channel_id, guild_id]);
+			logger.info(`added channel_id ${channel_id} to guild ${guild_id}`);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error(`error adding channel_id ${channel_id} to guild ${guild_id} ` + err);
+			return Promise.resolve(false);
+		}
+	}
+	async retrieveGuildSubmissionChannel(guild_id: string): Promise<String | null> {
+		try {
+			const res = await this.pool.query(
+				`SELECT submission_channel_id FROM guild WHERE id = ($1)`,
+				[guild_id]
+			);
+			if(res.rows.length > 0) {
+				return Promise.resolve(res.rows[0].id)
+			}
+			return Promise.resolve(null);
+		}catch(err) {
+			logger.error(`unable to get submission channel for guild id ${guild_id}` + err);
+			return Promise.resolve(null);
+		}
+	}
+
+
 	async addLeetcodeAccount(leetcode_id: string): Promise<boolean> {
 		try {
 			const res = await this.pool.query("INSERT INTO LEETCODE_ACCOUNT (id) VALUES ($1)", [

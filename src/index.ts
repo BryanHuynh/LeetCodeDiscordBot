@@ -3,13 +3,10 @@ import dotenv from "dotenv";
 
 import { PingController } from "./controllers/ping-controller";
 import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
-import { FirestoreService } from "./services/firestore-service";
 import { ISubscriptionService } from "./services/i-subscription-service";
-import { getUsersRecentSubmissionsByUsernames } from "./services/leetcode-service";
 import logger from "./utils/logger";
 import { PostgresService } from "./services/postgres-service";
 import { LeetcodeScheduler } from "./jobs/leetcode-scheduler";
-import { findNewAcs } from "./utils/find-new-acs";
 import { leetcodeAcDiscordMessageJob } from "./jobs/leetcode-ac-discord-message-job";
 import { ChannelSettingController } from "./controllers/channel-setting-controller";
 
@@ -42,5 +39,10 @@ client.once(Events.ClientReady, () => {
 	channelSettingController = new ChannelSettingController(client, subscriptionService);
 	channelSettingController.init();
 });
+
+
+client.on(Events.GuildCreate, (guild) => {
+	logger.info(`joined guild ${guild.name}`);
+})
 
 client.login(process.env.DISCORD_TOKEN);

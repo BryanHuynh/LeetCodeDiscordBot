@@ -108,14 +108,14 @@ export class PostgresService implements ISubscriptionService {
 			return Promise.resolve(false);
 		}
 	}
-	async retrieveGuildSubmissionChannel(guild_id: string): Promise<String | null> {
+	async retrieveGuildSubmissionChannel(guild_id: string): Promise<string | null> {
 		try {
 			const res = await this.pool.query(
 				`SELECT submission_channel_id FROM guild WHERE id = ($1)`,
 				[guild_id]
 			);
 			if(res.rows.length > 0) {
-				return Promise.resolve(res.rows[0].id)
+				return Promise.resolve(res.rows[0].submission_channel_id)
 			}
 			return Promise.resolve(null);
 		}catch(err) {

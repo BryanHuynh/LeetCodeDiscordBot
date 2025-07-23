@@ -9,6 +9,7 @@ import { PostgresService } from "./services/postgres-service";
 import { LeetcodeScheduler } from "./jobs/leetcode-scheduler";
 import { leetcodeAcDiscordMessageJob } from "./jobs/leetcode-ac-discord-message-job";
 import { ChannelSettingController } from "./controllers/channel-setting-controller";
+import { SubmissionSharingController } from "./controllers/submission-sharing-controller";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ let linkingLeetCodeController: LinkingLeetCodeController;
 let subscriptionService: ISubscriptionService = new PostgresService();
 let leetcodeScheduler: LeetcodeScheduler;
 let channelSettingController: ChannelSettingController;
+let submissionSharingController: SubmissionSharingController;
 
 client.once(Events.ClientReady, () => {
 	logger.info(`✅ Logged in as ${client.user?.tag}`);
@@ -38,6 +40,8 @@ client.once(Events.ClientReady, () => {
 	leetcodeScheduler.start(leetcodeAcDiscordMessageJob);
 	channelSettingController = new ChannelSettingController(client, subscriptionService);
 	channelSettingController.init();
+	submissionSharingController = new SubmissionSharingController(subscriptionService, client);
+	submissionSharingController.init();
 });
 
 

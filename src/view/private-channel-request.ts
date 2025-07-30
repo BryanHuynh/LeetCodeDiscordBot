@@ -69,7 +69,7 @@ export const sendPrivateChannelGreetingMessage = async (
 	try {
 		const message = await channel.send(
 			`Thank you for linking your leetcode account: ${leetcode_id} to your discord account: ${discord_user.username}. \n` +
-				`When you complete a leetcode problem, we will update you here in this thread if you want to share your submission results with the reset of the server`
+				`When you complete a leetcode problem, we will update you here in this thread if you want to share your submission results with the rest of the server`
 		);
 		return Promise.resolve(message);
 	} catch (err) {

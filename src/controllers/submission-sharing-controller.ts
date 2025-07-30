@@ -45,7 +45,7 @@ export class SubmissionSharingController {
 								embeds: [interaction.message.embeds[0]],
 							});
 							await submissionMessage.startThread({
-								name: "Discussion Thread",
+								name: `Discussion Thread ${interaction.message.embeds[0].title}`,
 								reason: "Follow-up conversation",
 							});
 							submissionMessage.forward(interaction.channel as TextChannel);

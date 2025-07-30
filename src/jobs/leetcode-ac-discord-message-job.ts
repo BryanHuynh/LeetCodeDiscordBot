@@ -1,23 +1,25 @@
-import { Client, Guild, TextChannel, User } from "discord.js";
-import { ISubscriptionService } from "../services/i-subscription-service";
+import { Client } from "discord.js";
 import { findNewAcs } from "../utils/find-new-acs";
 import {
 	sendPrivateChannelLCS,
-	createPrivateChannelRequest,
 } from "../view/private-channel-request";
-import LeetCodeSubmission from "../models/leetcode-submission";
 import LeetCodeSubmissionBuilder from "../models/leetcode-submission-builder";
 import logger from "../utils/logger";
 import { findOrCreatePrivateChannel } from "../utils/find-or-create-private-channel";
+import { container } from "tsyringe";
+import { SubscriptionRepository } from "../services/database-services/subscription-repository";
+import { AcCompletionRepository } from "../services/database-services/ac-completion-repository";
 
 export const leetcodeAcDiscordMessageJob = async (
-	dbService: ISubscriptionService,
 	client: Client
 ) => {
-	const leetcode_id_acs = await findNewAcs(dbService);
+	const leetcode_id_acs = await findNewAcs();
 	if (leetcode_id_acs == null || Object.keys(leetcode_id_acs).length == 0) return;
+	const subscriptionRepo = container.resolve(SubscriptionRepository);
+	const acCompletionRepo = container.resolve(AcCompletionRepository);
+
 	for (const leetcode_id in leetcode_id_acs) {
-		const subscriptions = await dbService.getSubscriptionsBasedOnLeetcodeId(leetcode_id);
+		const subscriptions = await subscriptionRepo.getSubscriptionsBasedOnLeetcodeId(leetcode_id);
 		for (const ac_index in leetcode_id_acs[leetcode_id]) {
 			const ac = leetcode_id_acs[leetcode_id][ac_index];
 			const leetcode_submission_builder: LeetCodeSubmissionBuilder =
@@ -34,7 +36,7 @@ export const leetcodeAcDiscordMessageJob = async (
 					const leetcode_submission = await leetcode_submission_builder
 						.withDiscordName(subscription.discord_id)
 						.build();
-					const thread = await findOrCreatePrivateChannel(guild, user, client, dbService);
+					const thread = await findOrCreatePrivateChannel(guild, user, client);
 					if (thread == null) return;
 					const message = await sendPrivateChannelLCS(thread, leetcode_submission);
 					if (message == null) return;
@@ -42,7 +44,7 @@ export const leetcodeAcDiscordMessageJob = async (
 					logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
 				}
 			}
-			await dbService.saveAC(ac.id, leetcode_id, parseInt(ac.timestamp));
+			await acCompletionRepo.addAcCompletion(ac.id, leetcode_id, ac.timestamp);
 		}
 	}
 };

@@ -1,6 +1,5 @@
 import { container } from "tsyringe";
 import LeetCodeSubmission from "../models/leetcode-submission";
-import { ISubscriptionService } from "../services/i-subscription-service";
 import { getUsersRecentSubmissionsByUsernames } from "../services/leetcode-service";
 import { UserProblems } from "../services/types/user-submission";
 import logger from "./logger";

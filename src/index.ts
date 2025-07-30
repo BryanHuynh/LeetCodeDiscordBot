@@ -1,18 +1,13 @@
 import { Client, Events, GatewayIntentBits, Guild, Partials, REST, Routes } from "discord.js";
 import dotenv from "dotenv";
 import "reflect-metadata";
-import { LinkingLeetCodeController } from "./controllers/linking-leetcode-controller";
-import { ISubscriptionService } from "./services/i-subscription-service";
 import logger from "./utils/logger";
 import { LeetcodeScheduler } from "./jobs/leetcode-scheduler";
 import { leetcodeAcDiscordMessageJob } from "./jobs/leetcode-ac-discord-message-job";
-import { ChannelSettingController } from "./controllers/channel-setting-controller";
-import { SubmissionSharingController } from "./controllers/submission-sharing-controller";
-import { GuildRepository } from "./services/database-services/guild-repository";
-import { container } from "tsyringe";
 import { DatabaseService } from "./services/database-services/database-service";
 import { InteractionCreateHandler } from "./handler/interaction-create-handler";
 import { data as subscribeCommand } from "./commands/subscribe";
+import { data as setChannelCommand } from "./commands/set-channel";
 
 dotenv.config();
 
@@ -52,7 +47,7 @@ client.on(Events.GuildCreate, (guild) => {
 client.login(process.env.DISCORD_TOKEN);
 
 const rest = new REST({ version: "10" }).setToken(process.env.DISCORD_TOKEN!);
-const commands = [subscribeCommand.toJSON()];
+const commands = [subscribeCommand.toJSON(), setChannelCommand.toJSON()];
 
 (async () => {
 	try {

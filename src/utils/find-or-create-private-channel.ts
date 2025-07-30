@@ -1,5 +1,4 @@
 import { Client, Guild, TextChannel, User } from "discord.js";
-import { ISubscriptionService } from "../services/i-subscription-service";
 import { createPrivateChannelRequest } from "../view/private-channel-request";
 import { container } from "tsyringe";
 import { ChannelRepository } from "../services/database-services/channel-repository";
@@ -16,7 +15,7 @@ export const findOrCreatePrivateChannel = async (
 		discord_user.id
 	);
 	if (res != null) {
-		const channel = await client.channels.fetch(res.id);
+		const channel = await client.channels.fetch(res.id).catch(() => null);
 		if (channel != null) {
 			return channel as TextChannel;
 		}

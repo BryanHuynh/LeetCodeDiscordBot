@@ -29,4 +29,17 @@ export class GuildRepository {
 		if (res.rows.length > 0) return res.rows[0];
 		return Promise.resolve(null);
 	}
+
+	async setChannelToGuild(guild_id: string, channel_id: string): Promise<boolean> {
+		try {
+			const res = await this.dbService.execute(
+				"UPDATE GUILD SET submission_channel_id = ($1) WHERE id = ($2)",
+				[channel_id, guild_id]
+			);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error(`error adding channel_id ${channel_id} to guild ${guild_id} ` + err);
+			return Promise.resolve(false);
+		}
+	}
 }

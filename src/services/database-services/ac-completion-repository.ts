@@ -29,4 +29,17 @@ export class AcCompletionRepository {
 		if (res.rows.length > 0) return res.rows;
 		return Promise.resolve([]);
 	}
+
+	async deleteAcCompletionsByLeetcodeId(leetcode_id: string): Promise<boolean> {
+		try {
+			const res = await this.dbService.execute(
+				"delete from ac_completion where leetcode_id = $1",
+				[leetcode_id]
+			);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error(`unable to delete ac completions by leetcode id: ${leetcode_id}`);
+			return Promise.resolve(false);
+		}
+	}
 }

@@ -7,6 +7,8 @@ import { SubscriptionRepository } from "./database-services/subscription-reposit
 import { AcCompletionRepository } from "./database-services/ac-completion-repository";
 import { Problem } from "./types/user-submission";
 import logger from "../utils/logger";
+import { unsubscribe } from "diagnostics_channel";
+import { remove } from "winston";
 
 export const AccountLinkingService = {
 	async subscribe(
@@ -42,6 +44,34 @@ export const AccountLinkingService = {
 			);
 		});
 
+		return Promise.resolve(true);
+	},
+
+	async unsubscribe(discord_id: string, guild_id: string | null): Promise<boolean> {
+		if (guild_id == null || guild_id == "") throw new Error("Guild is null");
+		if (discord_id == null || discord_id == "") throw new Error("Discord id is null");
+		const subscriptionRepo = container.resolve(SubscriptionRepository);
+		const subscription = await subscriptionRepo.getSubscriptionsBasedOnGuildAndDiscordId(
+			guild_id,
+			discord_id
+		);
+		if (subscription == null) return Promise.resolve(false);
+		const res = await subscriptionRepo.removeSubscription(discord_id, guild_id);
+		if (res) {
+			this.removeAccountIfNoSubscriptions(subscription.leetcode_id);
+		}
+		return Promise.resolve(res);
+	},
+
+	async removeAccountIfNoSubscriptions(leetcode_id: string): Promise<boolean> {
+		const subscriptionRepo = container.resolve(SubscriptionRepository);
+		const acCompletionRepo = container.resolve(AcCompletionRepository);
+		const leetcodeAccountRepo = container.resolve(LeetCodeAccountRepository);
+
+		const subscriptions = await subscriptionRepo.getSubscriptionsBasedOnLeetcodeId(leetcode_id);
+		if(subscriptions.length > 0) return Promise.resolve(false);
+		await acCompletionRepo.deleteAcCompletionsByLeetcodeId(leetcode_id);
+		await leetcodeAccountRepo.deleteAccountById(leetcode_id);
 		return Promise.resolve(true);
 	},
 };

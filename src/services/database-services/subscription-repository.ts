@@ -38,4 +38,36 @@ export class SubscriptionRepository {
 			return Promise.resolve([]);
 		}
 	}
+
+	async getSubscriptionsBasedOnGuildAndDiscordId(
+		guild_id: string,
+		discord_id: string
+	): Promise<Subscription | null> {
+		try {
+			const res = await this.dbService.execute(
+				"select leetcode_id, discord_id, guild_id from subscription where guild_id = $1 and discord_id = $2",
+				[guild_id, discord_id]
+			);
+			if (res.rows.length > 0) return res.rows[0];
+			return Promise.resolve(null);
+		} catch (err) {
+			logger.error(
+				`unable to get subscriptions based on guild and discord id: ${guild_id} ${discord_id}`
+			);
+			return Promise.resolve(null);
+		}
+	}
+
+	async removeSubscription(discord_id: string, guild_id: string): Promise<boolean> {
+		try {
+			const res = await this.dbService.execute(
+				"delete from subscription where discord_id = $1 and guild_id = $2",
+				[discord_id, guild_id]
+			);
+			return Promise.resolve(true);
+		} catch (err) {
+			logger.error(`unable to remove subscription: ${discord_id}`);
+			return Promise.reject(false);
+		}
+	}
 }

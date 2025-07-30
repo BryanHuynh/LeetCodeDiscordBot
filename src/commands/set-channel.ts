@@ -8,6 +8,7 @@ export const data = new SlashCommandBuilder()
 	.setDescription("Assign this text channel and the bot will share submissions here");
 
 export const execute = async (interaction: any) => {
+	console.log('set channel used');
 	if (
 		!(
 			interaction.member instanceof GuildMember &&

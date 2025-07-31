@@ -17,9 +17,6 @@ export const AccountLinkingService = {
 		guild_id: string,
 		guild_name: string
 	): Promise<boolean> {
-		const isValidAccount = await validateLeetCodeAccount(leetcode_id);
-		if (!isValidAccount) return Promise.reject(false);
-
 		const discordAccountRepo = container.resolve(DiscordAccountRepository);
 		await discordAccountRepo.addDiscordAccount(discord_id, leetcode_id);
 

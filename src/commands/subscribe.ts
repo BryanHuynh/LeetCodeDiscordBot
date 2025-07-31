@@ -9,6 +9,9 @@ import {
 import { AccountLinkingService } from "../services/account-linking-service";
 import { findOrCreatePrivateChannel } from "../utils/find-or-create-private-channel";
 import { sendPrivateChannelGreetingMessage } from "../view/private-channel-request";
+import { SubscriptionRepository } from "../services/database-services/subscription-repository";
+import { container } from "tsyringe";
+import { validateLeetCodeAccount } from "../services/leetcode-service";
 
 export const data = new SlashCommandBuilder()
 	.setName("subscribe")
@@ -20,10 +23,23 @@ export const data = new SlashCommandBuilder()
 			.setRequired(true)
 	);
 
+class AlreadySubscribedError extends Error {}
+class InvalidLeetCodeAccountError extends Error {}
+
 export async function execute(interaction: ChatInputCommandInteraction<CacheType>) {
 	const leetcode_account = interaction.options.getString("leetcode_account");
 	if (!leetcode_account) return;
+
 	try {
+		const subscriptionRepo = container.resolve(SubscriptionRepository);
+		const subscription = await subscriptionRepo.getSubscriptionsBasedOnGuildAndDiscordId(
+			interaction.guildId!,
+			interaction.user.id
+		);
+		if (subscription != null) throw new AlreadySubscribedError();
+
+		const isValidAccount = await validateLeetCodeAccount(leetcode_account);
+		if (!isValidAccount) throw new InvalidLeetCodeAccountError();
 		const response = await AccountLinkingService.subscribe(
 			leetcode_account!,
 			interaction.user.id,
@@ -31,17 +47,38 @@ export async function execute(interaction: ChatInputCommandInteraction<CacheType
 			interaction.guild!.name
 		);
 		if (response) {
-			await interaction.reply(`Your leetcode account is: ${leetcode_account} linked`);
 			const privateChannel = await findOrCreatePrivateChannel(
 				interaction.guild!,
 				interaction.user,
-				interaction.client,
+				interaction.client
 			);
 			if (privateChannel != null) {
-				await sendPrivateChannelGreetingMessage(privateChannel, interaction.user, leetcode_account);
+				await sendPrivateChannelGreetingMessage(
+					privateChannel,
+					interaction.user,
+					leetcode_account
+				);
 			}
+			await interaction.reply({
+				content: `Your leetcode account is: ${leetcode_account} linked`,
+				ephemeral: true,
+			});
+		} else {
+			throw new Error();
 		}
 	} catch (err) {
-		await interaction.reply(`unable to find leetcode account: ${leetcode_account}`);
+		if (err instanceof AlreadySubscribedError) {
+			interaction.reply({
+				content: "you are already subscribed, please unsubscribe first",
+				ephemeral: true,
+			});
+		} else if (err instanceof InvalidLeetCodeAccountError) {
+			interaction.reply({
+				content: `${leetcode_account} is not a valid leetcode account`,
+				ephemeral: true,
+			});
+		} else {
+			interaction.reply({ content: "unable to subscibe", ephemeral: true });
+		}
 	}
 }

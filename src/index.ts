@@ -9,7 +9,6 @@ import { InteractionCreateHandler } from "./handler/interaction-create-handler";
 import { data as subscribeCommand } from "./commands/subscribe";
 import { data as setChannelCommand } from "./commands/set-channel";
 import { data as unsubscribeCommand } from "./commands/unsubscribe";
-import { unsubscribe } from "diagnostics_channel";
 
 const client = new Client({
 	intents: [

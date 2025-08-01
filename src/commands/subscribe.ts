@@ -25,6 +25,7 @@ export const data = new SlashCommandBuilder()
 
 class AlreadySubscribedError extends Error {}
 class InvalidLeetCodeAccountError extends Error {}
+class LeetcodeIdAlreadyExistsError extends Error {}
 
 export async function execute(interaction: ChatInputCommandInteraction<CacheType>) {
 	const leetcode_account = interaction.options.getString("leetcode_account");
@@ -36,6 +37,15 @@ export async function execute(interaction: ChatInputCommandInteraction<CacheType
 			interaction.guildId!,
 			interaction.user.id
 		);
+		await subscriptionRepo
+			.checkIfSubscriptionExistsForLeetcodeIdAndGuildId(
+				leetcode_account!,
+				interaction.guildId!
+			)
+			.then((res) => {
+				if (res) throw new LeetcodeIdAlreadyExistsError();
+			});
+
 		if (subscription != null) throw new AlreadySubscribedError();
 
 		const isValidAccount = await validateLeetCodeAccount(leetcode_account);
@@ -76,6 +86,11 @@ export async function execute(interaction: ChatInputCommandInteraction<CacheType
 		} else if (err instanceof InvalidLeetCodeAccountError) {
 			interaction.reply({
 				content: `${leetcode_account} is not a valid leetcode account`,
+				ephemeral: true,
+			});
+		} else if (err instanceof LeetcodeIdAlreadyExistsError) {
+			interaction.reply({
+				content: `${leetcode_account} is already linked. Please contact server admin to resolve`,
 				ephemeral: true,
 			});
 		} else {

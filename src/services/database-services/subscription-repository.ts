@@ -39,6 +39,25 @@ export class SubscriptionRepository {
 		}
 	}
 
+	async checkIfSubscriptionExistsForLeetcodeIdAndGuildId(
+		leetcode_id: string,
+		guild_id: string
+	): Promise<boolean> {
+		try {
+			const res = await this.dbService.execute(
+				"select leetcode_id, discord_id, guild_id from subscription where leetcode_id = $1 and guild_id = $2",
+				[leetcode_id, guild_id]
+			);
+			if (res.rows.length > 0) return Promise.resolve(true);
+			return Promise.resolve(false);
+		} catch (err) {
+			Logger.error(
+				`unable to check if subscription exists for leetcode id and guild id: ${leetcode_id} ${guild_id}`
+			);
+			return Promise.resolve(false);
+		}
+	}
+
 	async getSubscriptionsBasedOnGuildAndDiscordId(
 		guild_id: string,
 		discord_id: string

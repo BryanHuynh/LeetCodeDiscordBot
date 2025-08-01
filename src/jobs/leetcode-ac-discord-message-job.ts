@@ -1,8 +1,6 @@
 import { Client } from "discord.js";
 import { findNewAcs } from "../utils/find-new-acs";
-import {
-	sendPrivateChannelLCS,
-} from "../view/private-channel-request";
+import { sendPrivateChannelLCS } from "../view/private-channel-request";
 import LeetCodeSubmissionBuilder from "../models/leetcode-submission-builder";
 import { findOrCreatePrivateChannel } from "../utils/find-or-create-private-channel";
 import { container } from "tsyringe";
@@ -10,9 +8,7 @@ import { SubscriptionRepository } from "../services/database-services/subscripti
 import { AcCompletionRepository } from "../services/database-services/ac-completion-repository";
 import { Logger } from "../utils/Logger";
 
-export const leetcodeAcDiscordMessageJob = async (
-	client: Client
-) => {
+export const leetcodeAcDiscordMessageJob = async (client: Client) => {
 	const leetcode_id_acs = await findNewAcs();
 	if (leetcode_id_acs == null || Object.keys(leetcode_id_acs).length == 0) return;
 	const subscriptionRepo = container.resolve(SubscriptionRepository);
@@ -44,8 +40,12 @@ export const leetcodeAcDiscordMessageJob = async (
 					Logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
 				}
 			}
-			await acCompletionRepo.addAcCompletion(ac.id, leetcode_id, ac.timestamp);
+			console.log(ac.timestamp);
+			await acCompletionRepo.addAcCompletion(
+				ac.id,
+				leetcode_id,
+				parseInt(ac.timestamp) * 1000
+			);
 		}
 	}
 };
-

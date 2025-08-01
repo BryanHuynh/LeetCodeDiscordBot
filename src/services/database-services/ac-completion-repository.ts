@@ -9,11 +9,11 @@ import { Logger } from "../../utils/Logger";
 export class AcCompletionRepository {
 	constructor(private dbService: DatabaseService) {}
 
-	async addAcCompletion(ac_id: string, leetcode_id: string, timestamp: string): Promise<boolean> {
+	async addAcCompletion(ac_id: string, leetcode_id: string, timestamp: string | number): Promise<boolean> {
 		try {
 			const res = await this.dbService.execute(
 				"insert into ac_completion (ac_id, leetcode_id, timestamp) values ($1, $2, $3)",
-				[ac_id, leetcode_id, new Date(parseInt(timestamp) * 1000).toISOString()]
+				[ac_id, leetcode_id, new Date(timestamp)]
 			);
 			return Promise.resolve(true);
 		} catch (err) {

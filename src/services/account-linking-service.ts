@@ -35,7 +35,7 @@ export const AccountLinkingService = {
 			const res = await acCompletionRepo.addAcCompletion(
 				problem.id,
 				leetcode_id,
-				new Date(problem.timestamp).toISOString()
+				problem.timestamp
 			);
 		});
 

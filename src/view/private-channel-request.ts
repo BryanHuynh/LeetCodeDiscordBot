@@ -1,4 +1,13 @@
-import { Client, Guild, Message, PermissionsBitField, TextChannel, User } from "discord.js";
+import {
+	ChannelType,
+	Client,
+	Guild,
+	Message,
+	PermissionFlagsBits,
+	PermissionsBitField,
+	TextChannel,
+	User,
+} from "discord.js";
 import LeetCodeSubmission from "../models/leetcode-submission";
 import {
 	acMessageActionButtonRow,
@@ -12,20 +21,16 @@ export const createPrivateChannelRequest = async (
 ): Promise<TextChannel | null> => {
 	try {
 		const channel = await guild.channels.create({
-			name: `LeetBro Accepted Problems`,
-			type: 0,
+			name: `Leetbro-submissions`,
+			type: ChannelType.GuildText,
 			permissionOverwrites: [
 				{
-					id: guild.roles.everyone.id,
-					deny: [PermissionsBitField.Flags.ViewChannel],
+					id: guild.roles.everyone,
+					deny: [PermissionFlagsBits.ViewChannel],
 				},
 				{
 					id: user.id,
-					allow: [
-						PermissionsBitField.Flags.ViewChannel,
-						PermissionsBitField.Flags.SendMessages,
-						PermissionsBitField.Flags.ReadMessageHistory,
-					],
+					allow: [PermissionFlagsBits.ViewChannel, PermissionFlagsBits.SendMessages],
 				},
 				{
 					id: guild.members.me!.id,

@@ -6,7 +6,6 @@ import { leetcodeAcDiscordMessageJob } from "../jobs/leetcode-ac-discord-message
 export const newAcs = (client: Client) => {
 	return async (req: Request<{}, {}, UserProblems>, res: Response) => {
 		const header = req.headers;
-		console.log(header.authorization);
 		if (header.authorization == `Bearer ${process.env.BEARER_TOKEN}`) {
 			const body = req.body;
 			console.log(body);

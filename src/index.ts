@@ -2,13 +2,13 @@ import { Client, Events, GatewayIntentBits, Guild, Partials, REST, Routes } from
 import dotenv from "dotenv";
 dotenv.config();
 import "reflect-metadata";
-import logger from "./utils/logger";
 import { LeetcodeScheduler } from "./jobs/leetcode-scheduler";
 import { leetcodeAcDiscordMessageJob } from "./jobs/leetcode-ac-discord-message-job";
 import { InteractionCreateHandler } from "./handler/interaction-create-handler";
 import { data as subscribeCommand } from "./commands/subscribe";
 import { data as setChannelCommand } from "./commands/set-channel";
 import { data as unsubscribeCommand } from "./commands/unsubscribe";
+import logger from "./utils/logger";
 
 const client = new Client({
 	intents: [

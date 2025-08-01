@@ -11,11 +11,12 @@ export const AccountLinkingService = {
 	async subscribe(
 		leetcode_id: string,
 		discord_id: string,
+		discord_username: string,
 		guild_id: string,
 		guild_name: string
 	): Promise<boolean> {
 		const discordAccountRepo = container.resolve(DiscordAccountRepository);
-		await discordAccountRepo.addDiscordAccount(discord_id, leetcode_id);
+		await discordAccountRepo.addDiscordAccount(discord_id, discord_username);
 
 		const leetcodeAccountRepo = container.resolve(LeetCodeAccountRepository);
 		await leetcodeAccountRepo.addAccount(leetcode_id);

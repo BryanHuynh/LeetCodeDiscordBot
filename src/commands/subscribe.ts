@@ -43,6 +43,7 @@ export async function execute(interaction: ChatInputCommandInteraction<CacheType
 		const response = await AccountLinkingService.subscribe(
 			leetcode_account!,
 			interaction.user.id,
+			interaction.user.username,
 			interaction.guildId!,
 			interaction.guild!.name
 		);

@@ -1,8 +1,9 @@
 import "reflect-metadata";
 import { injectable } from "tsyringe";
 import { DatabaseService } from "./database-service";
-import logger from "../../utils/logger";
+
 import { AcCompletion } from "../../models/ac-completion";
+import { Logger } from "../../utils/Logger";
 
 @injectable()
 export class AcCompletionRepository {
@@ -16,7 +17,7 @@ export class AcCompletionRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add ac completion: ${ac_id} ${leetcode_id} ${err}`);
+			Logger.error(`unable to add ac completion: ${ac_id} ${leetcode_id} ${err}`);
 			return Promise.resolve(false);
 		}
 	}
@@ -38,7 +39,7 @@ export class AcCompletionRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to delete ac completions by leetcode id: ${leetcode_id}`);
+			Logger.error(`unable to delete ac completions by leetcode id: ${leetcode_id}`);
 			return Promise.resolve(false);
 		}
 	}

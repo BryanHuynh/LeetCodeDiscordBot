@@ -1,7 +1,8 @@
 import "reflect-metadata";
 import { injectable } from "tsyringe";
 import { DatabaseService } from "./database-service";
-import logger from "../../utils/logger";
+import { Logger } from "../../utils/Logger";
+
 
 @injectable()
 export class DiscordAccountRepository {
@@ -15,7 +16,7 @@ export class DiscordAccountRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add discord account: ${id} ${username}`);
+			Logger.error(`unable to add discord account: ${id} ${username}`);
 			return Promise.resolve(false);
 		}
 	}

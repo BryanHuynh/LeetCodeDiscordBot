@@ -2,7 +2,7 @@ import { injectable } from "tsyringe";
 import { LeetcodeAccount } from "../../models/leetcode-account";
 import { DatabaseService } from "./database-service";
 import "reflect-metadata";
-import logger from "../../utils/logger";
+import { Logger } from "../../utils/Logger";
 
 @injectable()
 export class LeetCodeAccountRepository {
@@ -16,7 +16,7 @@ export class LeetCodeAccountRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add leetcode account: ${id}`);
+			Logger.error(`unable to add leetcode account: ${id}`);
 			return Promise.resolve(false);
 		}
 	}
@@ -29,7 +29,7 @@ export class LeetCodeAccountRepository {
 			);
 			if (res.rows.length > 0) return res.rows[0];
 		} catch (err) {
-			logger.error(`unable to get leetcode account: ${id}`);
+			Logger.error(`unable to get leetcode account: ${id}`);
 		}
 
 		return Promise.resolve(null);
@@ -40,7 +40,7 @@ export class LeetCodeAccountRepository {
 			const res = await this.dbService.execute("select id, created_at from leetcode_account");
 			if (res.rows.length > 0) return res.rows;
 		} catch (err) {
-			logger.error(`unable to get all leetcode accounts`);
+			Logger.error(`unable to get all leetcode accounts`);
 		}
 
 		return Promise.resolve([]);
@@ -53,7 +53,7 @@ export class LeetCodeAccountRepository {
 			]);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to delete leetcode account: ${id}`);
+			Logger.error(`unable to delete leetcode account: ${id}`);
 		}
 		return Promise.resolve(false);
 	}

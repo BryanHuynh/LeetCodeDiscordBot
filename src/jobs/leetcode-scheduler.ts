@@ -1,6 +1,6 @@
 import cron, { ScheduledTask } from "node-cron";
-import logger from "../utils/logger";
 import { Client } from "discord.js";
+import { Logger } from "../utils/Logger";
 
 export class LeetcodeScheduler {
 	private job: ScheduledTask | null = null;
@@ -11,7 +11,7 @@ export class LeetcodeScheduler {
 	}
 
 	start(jobFunc: (client: Client) => Promise<void>) {
-		logger.info("starting leetcode scheduler");
+		Logger.info("starting leetcode scheduler");
 
 		this.job = cron.schedule("*/5 * * * *", () => {
 			jobFunc(this.client);

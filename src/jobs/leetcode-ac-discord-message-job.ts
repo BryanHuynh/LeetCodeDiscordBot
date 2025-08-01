@@ -4,11 +4,11 @@ import {
 	sendPrivateChannelLCS,
 } from "../view/private-channel-request";
 import LeetCodeSubmissionBuilder from "../models/leetcode-submission-builder";
-import logger from "../utils/logger";
 import { findOrCreatePrivateChannel } from "../utils/find-or-create-private-channel";
 import { container } from "tsyringe";
 import { SubscriptionRepository } from "../services/database-services/subscription-repository";
 import { AcCompletionRepository } from "../services/database-services/ac-completion-repository";
+import { Logger } from "../utils/Logger";
 
 export const leetcodeAcDiscordMessageJob = async (
 	client: Client
@@ -41,7 +41,7 @@ export const leetcodeAcDiscordMessageJob = async (
 					const message = await sendPrivateChannelLCS(thread, leetcode_submission);
 					if (message == null) return;
 				} catch (err) {
-					logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
+					Logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
 				}
 			}
 			await acCompletionRepo.addAcCompletion(ac.id, leetcode_id, ac.timestamp);

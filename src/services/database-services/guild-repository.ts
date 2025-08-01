@@ -2,7 +2,7 @@ import { injectable } from "tsyringe";
 import { DatabaseService } from "./database-service";
 import "reflect-metadata";
 import { Guild } from "../../models/guild";
-import logger from "../../utils/logger";
+import { Logger } from "../../utils/Logger";
 
 @injectable()
 export class GuildRepository {
@@ -16,7 +16,7 @@ export class GuildRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add guild: ${id} ${guild_name}`);
+			Logger.error(`unable to add guild: ${id} ${guild_name}`);
 			return Promise.resolve(false);
 		}
 	}
@@ -38,7 +38,7 @@ export class GuildRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`error adding channel_id ${channel_id} to guild ${guild_id} ` + err);
+			Logger.error(`error adding channel_id ${channel_id} to guild ${guild_id} ` + err);
 			return Promise.resolve(false);
 		}
 	}

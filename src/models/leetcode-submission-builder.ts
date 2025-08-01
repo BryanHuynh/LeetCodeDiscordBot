@@ -1,7 +1,7 @@
 import { getQuestionContentBySlug, getQuestionStatsByTitleSlug, getUserRecentSubmissionsByUsername } from "../services/leetcode-service";
 import { QuestionContent } from "../services/types/question-content";
 import { Problem, UserProblems, UserSubmission } from "../services/types/user-submission";
-import logger from "../utils/logger";
+import { Logger } from "../utils/Logger";
 import { DifficultyLevel } from "./difficulty-level";
 import LeetCodeSubmission from "./leetcode-submission";
 
@@ -82,7 +82,7 @@ export class LeetCodeSubmissionBuilder {
 	public async buildLatestSubmissionFromServices(leetcode_id: string, discord_name: string): Promise<LeetCodeSubmission> {
 		const userProblem: UserProblems = await getUserRecentSubmissionsByUsername(leetcode_id);
 		if (userProblem[leetcode_id].length == 0) {
-			logger.error(`unable to find submissions for ${leetcode_id}`);
+			Logger.error(`unable to find submissions for ${leetcode_id}`);
 		}
 		const [questionContent, questionStat] = await Promise.all([
 			getQuestionContentBySlug(userProblem[leetcode_id][0].titleSlug),

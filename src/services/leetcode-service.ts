@@ -1,13 +1,13 @@
 import { GraphQLClient, gql } from "graphql-request";
 import { fromQuestionContentResponse, QuestionContent, QuestionContentResponse } from "./types/question-content";
-import logger from "../utils/logger";
 import { fromQuestionStatsResponse, QuestionStats, QuestionStatsResponse } from "./types/question-stats";
 import { fromUsersSubmissionsResponse, fromUserSubmissionsResponse, UserProblems, UserSubmission } from "./types/user-submission";
+import { Logger } from "../utils/Logger";
 
 const leetCodeEndpoint: string = "https://leetcode.com/graphql/";
 
 async function getQuestionContentBySlug(titleSlug: string): Promise<QuestionContent> {
-	logger.info(`Getting question content for slug: ${titleSlug}`);
+	Logger.info(`Getting question content for slug: ${titleSlug}`);
 	const query: string = gql`
 		query questionContent($titleSlug: String!) {
 			question(titleSlug: $titleSlug) {
@@ -25,7 +25,7 @@ async function getQuestionContentBySlug(titleSlug: string): Promise<QuestionCont
 }
 
 async function getQuestionStatsByTitleSlug(titleSlug: string): Promise<QuestionStats> {
-	logger.info(`getting question stats for slug: ${titleSlug}`);
+	Logger.info(`getting question stats for slug: ${titleSlug}`);
 	const query: string = gql`
 		query questionStats($titleSlug: String!) {
 			question(titleSlug: $titleSlug) {
@@ -46,7 +46,7 @@ async function getQuestionStatsByTitleSlug(titleSlug: string): Promise<QuestionS
 }
 
 async function getUserRecentSubmissionsByUsername(username: string, limit: number = 10): Promise<UserProblems> {
-	logger.info(`getting user recent submissions for username: ${username}`);
+	Logger.info(`getting user recent submissions for username: ${username}`);
 	const query: string = gql`
 		query recentAcSubmissions($username: String!, $limit: Int!) {
 			recentAcSubmissionList(username: $username, limit: $limit) {
@@ -67,7 +67,7 @@ async function getUserRecentSubmissionsByUsername(username: string, limit: numbe
 }
 
 async function validateLeetCodeAccount(leetcodeAccount: string): Promise<boolean> {
-	logger.info(`validating leetcode account: ${leetcodeAccount}`);
+	Logger.info(`validating leetcode account: ${leetcodeAccount}`);
 	const query: string = gql`
 		query userPublicProfile($username: String!) {
 			matchedUser(username: $username) {
@@ -89,7 +89,7 @@ async function validateLeetCodeAccount(leetcodeAccount: string): Promise<boolean
 }
 
 async function getUsersRecentSubmissionsByUsernames(usernames: string[], limit: number = 10): Promise<UserProblems> {
-	logger.info(`getting user recent submissions for username: ${usernames.toString()}`);
+	Logger.info(`getting user recent submissions for username: ${usernames.toString()}`);
 	let query: string = gql`
 		query recentAcSubmissions(${usernames.map((_, index) => `$username${index}: String!`).join(", ")}, $limit: Int!) {
 	`;

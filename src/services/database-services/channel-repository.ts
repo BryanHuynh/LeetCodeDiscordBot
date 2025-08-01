@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { injectable } from "tsyringe";
 import { DatabaseService } from "./database-service";
-import logger from "../../utils/logger";
 import { Channel } from "../../models/channel";
+import { Logger } from "../../utils/Logger";
 
 @injectable()
 export class ChannelRepository {
@@ -16,7 +16,7 @@ export class ChannelRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add channel: ${id} ${guild_id} ${discord_id}`);
+			Logger.error(`unable to add channel: ${id} ${guild_id} ${discord_id}`);
 			return Promise.resolve(false);
 		}
 	}
@@ -33,7 +33,7 @@ export class ChannelRepository {
 			if (res.rows.length > 0) return res.rows[0];
 			return Promise.resolve(null);
 		} catch (err) {
-			logger.error(`unable to get channel: ${guild_id} ${discord_id}`);
+			Logger.error(`unable to get channel: ${guild_id} ${discord_id}`);
 			return Promise.resolve(null);
 		}
 	}

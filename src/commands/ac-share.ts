@@ -2,7 +2,7 @@ import { ButtonInteraction, TextChannel } from "discord.js";
 import { GuildRepository } from "../services/database-services/guild-repository";
 import { container } from "tsyringe";
 import { AcSharingService } from "../services/ac-sharing-services";
-import logger from "../utils/logger";
+import { Logger } from "../utils/Logger";
 
 export const execute = async function (interaction: ButtonInteraction) {
 	await interaction.deferUpdate();
@@ -37,7 +37,7 @@ export const execute = async function (interaction: ButtonInteraction) {
 			res.forward(interaction.channel as TextChannel);
 		})
 		.catch((err) => {
-			logger.error(err);
+			Logger.error(err);
 			interaction.followUp({
 				content: "we encountered an issue and were not able to share your submission",
 				ephemeral: true,

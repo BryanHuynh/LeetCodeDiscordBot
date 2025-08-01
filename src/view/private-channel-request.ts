@@ -4,7 +4,7 @@ import {
 	acMessageActionButtonRow,
 	EmbedLeetcodeSubmissionMessage,
 } from "./embed-leetcode-submission-message";
-import logger from "../utils/logger";
+import { Logger } from "../utils/Logger";
 
 export const createPrivateChannelRequest = async (
 	guild: Guild,
@@ -40,7 +40,7 @@ export const createPrivateChannelRequest = async (
 		});
 		return Promise.resolve(channel);
 	} catch (err) {
-		logger.error("Failed to create private channel:", err);
+		Logger.error("Failed to create private channel:", err);
 	}
 	return Promise.resolve(null);
 };
@@ -56,7 +56,7 @@ export const sendPrivateChannelLCS = async (
 		});
 		return Promise.resolve(message);
 	} catch (err) {
-		logger.error("failed to create embed Message", err);
+		Logger.error("failed to create embed Message", err);
 	}
 	return Promise.resolve(null);
 };
@@ -73,7 +73,7 @@ export const sendPrivateChannelGreetingMessage = async (
 		);
 		return Promise.resolve(message);
 	} catch (err) {
-		logger.error("failed to create greeting Message", err);
+		Logger.error("failed to create greeting Message", err);
 	}
 	return Promise.resolve(null);
 };

@@ -2,13 +2,14 @@ import { Client, Events, GatewayIntentBits, Guild, Partials, REST, Routes } from
 import dotenv from "dotenv";
 dotenv.config();
 import "reflect-metadata";
-import logger from "./utils/logger";
 import { LeetcodeScheduler } from "./jobs/leetcode-scheduler";
 import { leetcodeAcDiscordMessageJob } from "./jobs/leetcode-ac-discord-message-job";
 import { InteractionCreateHandler } from "./handler/interaction-create-handler";
 import { data as subscribeCommand } from "./commands/subscribe";
 import { data as setChannelCommand } from "./commands/set-channel";
 import { data as unsubscribeCommand } from "./commands/unsubscribe";
+import { Logger } from "./utils/Logger";
+
 
 const client = new Client({
 	intents: [
@@ -22,7 +23,7 @@ const client = new Client({
 let leetcodeScheduler: LeetcodeScheduler;
 
 client.once(Events.ClientReady, () => {
-	logger.info(`✅ Logged in as ${client.user?.tag}`);
+	Logger.info(`✅ Logged in as ${client.user?.tag}`);
 	leetcodeScheduler = new LeetcodeScheduler(client);
 	leetcodeScheduler.start(leetcodeAcDiscordMessageJob);
 });
@@ -30,7 +31,7 @@ client.once(Events.ClientReady, () => {
 client.on(Events.InteractionCreate, InteractionCreateHandler.execute);
 
 client.on(Events.GuildCreate, (guild) => {
-	logger.info(`joined guild ${guild.name}`);
+	Logger.info(`joined guild ${guild.name}`);
 });
 
 client.login(process.env.DISCORD_TOKEN);

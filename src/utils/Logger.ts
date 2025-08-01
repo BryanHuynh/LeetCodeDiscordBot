@@ -1,6 +1,6 @@
 import winston from 'winston';
 
-const logger = winston.createLogger({
+export const Logger = winston.createLogger({
   level: 'info',
   format: winston.format.combine(
     winston.format.timestamp(),
@@ -15,4 +15,3 @@ const logger = winston.createLogger({
   ],
 });
 
-export default logger;

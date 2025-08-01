@@ -2,7 +2,6 @@ import { container } from "tsyringe";
 import LeetCodeSubmission from "../models/leetcode-submission";
 import { getUsersRecentSubmissionsByUsernames } from "../services/leetcode-service";
 import { UserProblems } from "../services/types/user-submission";
-import logger from "./logger";
 import { LeetCodeAccountRepository } from "../services/database-services/leetcode-account-repository";
 import { AcCompletionRepository } from "../services/database-services/ac-completion-repository";
 

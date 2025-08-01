@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Pool, PoolConfig, QueryResult } from "pg";
-import logger from "../../utils/logger";
 import { singleton } from "tsyringe";
+import { Logger } from '../../utils/Logger';
 
 @singleton()
 export class DatabaseService {
@@ -30,7 +30,7 @@ export class DatabaseService {
 	}
 
 	async execute(query: string, params?: any[]): Promise<QueryResult<any>> {
-		logger.info(`Executing query: ${query} with params: ${params}`);
+		Logger.info(`Executing query: ${query} with params: ${params}`);
 		// An async function automatically handles promise resolution and rejection.
 		return this.pool.query(query, params);
 	}

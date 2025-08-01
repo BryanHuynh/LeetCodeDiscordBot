@@ -1,8 +1,8 @@
 import "reflect-metadata";
 import { injectable } from "tsyringe";
 import { DatabaseService } from "./database-service";
-import logger from "../../utils/logger";
 import { Subscription } from "../../models/subscription";
+import { Logger } from "../../utils/Logger";
 
 @injectable()
 export class SubscriptionRepository {
@@ -20,7 +20,7 @@ export class SubscriptionRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to add subscription: ${leetcode_id} ${discord_id} ${guild_id}`);
+			Logger.error(`unable to add subscription: ${leetcode_id} ${discord_id} ${guild_id}`);
 			return Promise.resolve(false);
 		}
 	}
@@ -34,7 +34,7 @@ export class SubscriptionRepository {
 			if (res.rows.length > 0) return res.rows;
 			return Promise.resolve([]);
 		} catch (err) {
-			logger.error(`unable to get subscriptions based on leetcode id: ${leetcode_id}`);
+			Logger.error(`unable to get subscriptions based on leetcode id: ${leetcode_id}`);
 			return Promise.resolve([]);
 		}
 	}
@@ -51,7 +51,7 @@ export class SubscriptionRepository {
 			if (res.rows.length > 0) return res.rows[0];
 			return Promise.resolve(null);
 		} catch (err) {
-			logger.error(
+			Logger.error(
 				`unable to get subscriptions based on guild and discord id: ${guild_id} ${discord_id}`
 			);
 			return Promise.resolve(null);
@@ -66,7 +66,7 @@ export class SubscriptionRepository {
 			);
 			return Promise.resolve(true);
 		} catch (err) {
-			logger.error(`unable to remove subscription: ${discord_id}`);
+			Logger.error(`unable to remove subscription: ${discord_id}`);
 			return Promise.reject(false);
 		}
 	}

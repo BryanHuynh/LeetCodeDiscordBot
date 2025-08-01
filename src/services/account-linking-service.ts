@@ -6,9 +6,6 @@ import { GuildRepository } from "./database-services/guild-repository";
 import { SubscriptionRepository } from "./database-services/subscription-repository";
 import { AcCompletionRepository } from "./database-services/ac-completion-repository";
 import { Problem } from "./types/user-submission";
-import logger from "../utils/logger";
-import { unsubscribe } from "diagnostics_channel";
-import { remove } from "winston";
 
 export const AccountLinkingService = {
 	async subscribe(

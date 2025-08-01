@@ -118,7 +118,7 @@ export class LeetCodeSubmissionBuilder {
 			.withCategory(questionStat.category)
 			.withProblemUrl(`https://leetcode.com/problems/${questionContent.titleSlug}/description/`)
 			.withDifficulty(questionStat.difficulty)
-			.withAcceptedSubmissions(questionStat.stats.totalSubmissions)
+			.withAcceptedSubmissions(questionStat.stats.totalAccepted)
 			.withTotalSubmissions(questionStat.stats.totalSubmissions)
 			.withAcceptedRate(questionStat.stats.acceptanceRate)
 			.withSubmissionUrl(problem.submissionUrl);

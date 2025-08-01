@@ -16,7 +16,7 @@ export const EmbedLeetcodeSubmissionMessage = (lcs: LeetCodeSubmission): EmbedBu
 		)
 		.setDescription(lcs.problem_description)
 		.setFooter({
-			text: `Accepted: ${lcs.accepted_submissions}/${lcs.total_submissions} | Acceptance Rate: ${lcs.acceptance_rate}%`,
+			text: `Accepted: ${lcs.accepted_submissions}/${lcs.total_submissions} | Acceptance Rate: ${lcs.acceptance_rate}`,
 		})
 		.setColor("Random");
 };

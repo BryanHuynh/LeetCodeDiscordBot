@@ -7,9 +7,9 @@ import { container } from "tsyringe";
 import { SubscriptionRepository } from "../services/database-services/subscription-repository";
 import { AcCompletionRepository } from "../services/database-services/ac-completion-repository";
 import { Logger } from "../utils/Logger";
+import { UserProblems } from "../services/types/user-submission";
 
-export const leetcodeAcDiscordMessageJob = async (client: Client) => {
-	const leetcode_id_acs = await findNewAcs();
+export const leetcodeAcDiscordMessageJob = async (client: Client, leetcode_id_acs: UserProblems) => {
 	if (leetcode_id_acs == null || Object.keys(leetcode_id_acs).length == 0) return;
 	const subscriptionRepo = container.resolve(SubscriptionRepository);
 	const acCompletionRepo = container.resolve(AcCompletionRepository);
@@ -40,7 +40,6 @@ export const leetcodeAcDiscordMessageJob = async (client: Client) => {
 					Logger.error(`unable to send message to discord ${guild.id} ${user.id}`, err);
 				}
 			}
-			console.log(ac.timestamp);
 			await acCompletionRepo.addAcCompletion(
 				ac.id,
 				leetcode_id,

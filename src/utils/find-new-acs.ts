@@ -27,5 +27,6 @@ export const findNewAcs = async (): Promise<UserProblems | null> => {
 			new_users_acs[user] = new_user_acs;
 		}
 	}
+	console.log(new_users_acs);
 	return new_users_acs;
 };

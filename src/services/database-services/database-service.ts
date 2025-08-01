@@ -15,6 +15,7 @@ export class DatabaseService {
 			database: process.env.POSTGRES_DATABASE,
 			password: process.env.POSTGRES_PASSWORD,
 			port: parseInt(process.env.POSTGRES_PORT || "5432"),
+			ssl: true,
 		};
 		this.pool = new Pool(this.pgConfig);
 		this.init();

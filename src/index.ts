@@ -10,6 +10,7 @@ import { data as unsubscribeCommand } from "./commands/unsubscribe";
 import { Logger } from "./utils/Logger";
 import express from "express";
 import { newAcs } from "./controllers/new-acs-controller";
+import { sendEmail } from "./utils/send-email";
 
 const app = express();
 const port = 3000;
@@ -49,6 +50,21 @@ const commands = [
 	setChannelCommand.toJSON(),
 	unsubscribeCommand.toJSON(),
 ];
+
+process.on("uncaughtException", (error: Error) => {
+	Logger.error("UNCAUGHT EXCEPTION! 💥 Shutting down...", error);
+
+	const subject = "Bot Crash Report: Uncaught Exception";
+	const text = `An uncaught exception occurred:\n\n${error.stack || error.message}`;
+	if (!process.env.EMAIL) return;
+	sendEmail(process.env.EMAIL, subject, text)
+		.catch((emailError) => {
+			Logger.error("Failed to send crash report email:", emailError);
+		})
+		.finally(() => {
+			process.exit(1);
+		});
+});
 
 (async () => {
 	try {

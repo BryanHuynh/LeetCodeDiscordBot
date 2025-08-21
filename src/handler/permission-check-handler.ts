@@ -1,25 +1,35 @@
-import { Interaction, PermissionFlagsBits, PermissionResolvable, PermissionsBitField } from "discord.js";
+import {
+	Interaction,
+	PermissionFlagsBits,
+	PermissionResolvable,
+} from "discord.js";
 
 const requiredPermissions: PermissionResolvable[] = [
-    PermissionFlagsBits.ManageMessages,
-    PermissionFlagsBits.SendMessages,
-    PermissionFlagsBits.ViewChannel,
-    PermissionFlagsBits.CreatePublicThreads,
-    PermissionFlagsBits.CreatePrivateThreads,
-    PermissionFlagsBits.UseApplicationCommands
+	PermissionFlagsBits.SendMessages,
+	PermissionFlagsBits.ViewChannel,
+	PermissionFlagsBits.CreatePublicThreads,
+	PermissionFlagsBits.CreatePrivateThreads,
+	PermissionFlagsBits.UseApplicationCommands
 ];
 
-export const PermissionCheckHandler = (
+export const permissionCheckHandler = (
 	interaction: Interaction
-): { success: boolean; missingPermissions?: PermissionResolvable[] } => {
+): { success: boolean; missingPermissions?: string[] } => {
 	const botMember = interaction.guild?.members.me;
-	if (!botMember) throw new Error("unable to get bot member");
+	if (!botMember) return { success: false, missingPermissions: [] };
 
-	const missingPermissions = requiredPermissions.filter(
+	const missingPermissionFlags = requiredPermissions.filter(
 		(permission) => !botMember.permissions.has(permission)
 	);
-	if (missingPermissions.length > 0) {
-		return { success: false, missingPermissions: missingPermissions };
+	if (missingPermissionFlags.length > 0) {
+		const missingPermissionNames = missingPermissionFlags
+			.map((flag) =>
+				Object.keys(PermissionFlagsBits).find(
+					(key) => PermissionFlagsBits[key as keyof typeof PermissionFlagsBits] === flag
+				)
+			)
+			.filter((name): name is string => name !== undefined);
+		return { success: false, missingPermissions: missingPermissionNames };
 	}
 	return { success: true };
 };

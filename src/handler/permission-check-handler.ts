@@ -9,7 +9,8 @@ const requiredPermissions: PermissionResolvable[] = [
 	PermissionFlagsBits.ViewChannel,
 	PermissionFlagsBits.CreatePublicThreads,
 	PermissionFlagsBits.CreatePrivateThreads,
-	PermissionFlagsBits.UseApplicationCommands
+	PermissionFlagsBits.UseApplicationCommands,
+	PermissionFlagsBits.ManageChannels
 ];
 
 export const permissionCheckHandler = (

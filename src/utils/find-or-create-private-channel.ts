@@ -10,14 +10,18 @@ export const findOrCreatePrivateChannel = async (
 	client: Client
 ): Promise<TextChannel | null> => {
 	const channelRepo = container.resolve(ChannelRepository);
-	const res: Channel | null = await channelRepo.getChannelByGuildAndDiscordId(
+	const res: Channel[] | null = await channelRepo.getChannelByGuildAndDiscordId(
 		guild.id,
 		discord_user.id
 	);
 	if (res != null) {
-		const channel = await client.channels.fetch(res.id).catch(() => null);
-		if (channel != null) {
-			return channel as TextChannel;
+		for (let i = 0; i < res.length; i++) {
+			const channel = await client.channels
+				.fetch(res[i].id)
+				.catch((err) => channelRepo.deleteChannelByGuildAndChannelId(guild.id, res[i].id));
+			if (channel) {
+				return channel as TextChannel;
+			}
 		}
 	}
 	// CHECK AND SEE IF THREAD IS CREATED ON CREATION OR CREATED ON MESSAGE

@@ -1,4 +1,10 @@
-import { CacheType, ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+	CacheType,
+	ChatInputCommandInteraction,
+	PermissionFlagsBits,
+	PermissionResolvable,
+	SlashCommandBuilder,
+} from "discord.js";
 import { AccountLinkingService } from "../services/account-linking-service";
 
 export const data = new SlashCommandBuilder()

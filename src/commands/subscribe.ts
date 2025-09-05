@@ -4,6 +4,8 @@ import {
 	Client,
 	CommandInteraction,
 	Interaction,
+	PermissionFlagsBits,
+	PermissionResolvable,
 	SlashCommandBuilder,
 } from "discord.js";
 import { AccountLinkingService } from "../services/account-linking-service";

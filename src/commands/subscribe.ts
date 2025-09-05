@@ -29,50 +29,7 @@ class AlreadySubscribedError extends Error {}
 class InvalidLeetCodeAccountError extends Error {}
 class LeetcodeIdAlreadyExistsError extends Error {}
 
-function checkPermission(interaction: ChatInputCommandInteraction<CacheType>): {
-	success: boolean;
-	message?: string;
-} {
-	const requiredPermissions: PermissionResolvable[] = [
-		PermissionFlagsBits.SendMessages,
-		PermissionFlagsBits.ViewChannel,
-		PermissionFlagsBits.ManageChannels,
-	];
-
-	const botMember = interaction.guild?.members.me;
-	if (!botMember)
-		return {
-			success: false,
-			message: "We were unable to properly check for bot permissions in your server",
-		};
-	const missingPermissionFlags = requiredPermissions.filter(
-		(permission) => !botMember.permissions.has(permission)
-	);
-	if (missingPermissionFlags.length > 0) {
-		const missingPermissionNames = missingPermissionFlags
-			.map((flag) =>
-				Object.keys(PermissionFlagsBits).find(
-					(key) => PermissionFlagsBits[key as keyof typeof PermissionFlagsBits] === flag
-				)
-			)
-			.filter((name): name is string => name !== undefined);
-		return {
-			success: false,
-			message: `Bot is missing these permissions: ${missingPermissionNames}`,
-		};
-	}
-	return { success: true };
-}
-
 export async function execute(interaction: ChatInputCommandInteraction<CacheType>) {
-	const permission_res = checkPermission(interaction);
-	if (!permission_res.success) {
-		interaction.reply({
-			content: permission_res.message,
-			ephemeral: true,
-		});
-		return;
-	}
 	const leetcode_account = interaction.options.getString("leetcode_account");
 	if (!leetcode_account) return;
 

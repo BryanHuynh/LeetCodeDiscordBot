@@ -1,4 +1,13 @@
-import { Guild, GuildMember, PermissionsBitField, SlashCommandBuilder } from "discord.js";
+import {
+	CacheType,
+	ChatInputCommandInteraction,
+	Guild,
+	GuildMember,
+	PermissionFlagsBits,
+	PermissionResolvable,
+	PermissionsBitField,
+	SlashCommandBuilder,
+} from "discord.js";
 import { container } from "tsyringe";
 import { ChannelRepository } from "../services/database-services/channel-repository";
 import { GuildRepository } from "../services/database-services/guild-repository";
@@ -7,8 +16,7 @@ export const data = new SlashCommandBuilder()
 	.setName("set-channel")
 	.setDescription("Assign this text channel and the bot will share submissions here");
 
-export const execute = async (interaction: any) => {
-	console.log('set channel used');
+export const execute = async (interaction: ChatInputCommandInteraction<CacheType>) => {
 	if (
 		!(
 			interaction.member instanceof GuildMember &&

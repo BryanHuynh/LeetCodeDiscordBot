@@ -1,3 +1,4 @@
+![Logo](assets/Banner.png)
 # LeetBro 🤖
 
 A Discord bot that showcases your accepted LeetCode solutions directly in your server.

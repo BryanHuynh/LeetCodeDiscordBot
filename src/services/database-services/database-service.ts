@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { Pool, PoolConfig, QueryResult } from "pg";
 import { singleton } from "tsyringe";
 import { Logger } from "../../utils/Logger";
+import { sendEmail } from "../../utils/send-email";
 
 export class DatabaseConnectionError extends Error {}
 
@@ -35,7 +36,14 @@ export class DatabaseService {
 			const res = this.pool.query("select 1");
 			return true;
 		} catch (err) {
-			Logger.error("unable to connect to the database");
+			if (!process.env.EMAIL) return false;
+			sendEmail(
+				process.env.EMAIL,
+				"LeetBro Status Update",
+				"Leet bro was unable to connect to the database"
+			).catch((emailError) => {
+				Logger.error("Failed to send crash report email:", emailError);
+			});
 			return false;
 		}
 	}
